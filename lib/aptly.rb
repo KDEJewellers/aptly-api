@@ -24,9 +24,11 @@ require 'aptly/version'
 module Aptly
   class << self
     def configure
+      yield configuration
+    end
+
+    def configuration
       @configuration ||= Configuration.new
-      return @configuration unless block_given?
-      yield @configuration
     end
 
     # 400	prefix/distribution is already used by another published repository

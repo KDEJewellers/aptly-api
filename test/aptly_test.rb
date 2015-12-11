@@ -10,8 +10,8 @@ class AptlyTest < Minitest::Test
   end
 
   def test_configuration
-    refute_nil ::Aptly.configure
-    assert ::Aptly.configure.is_a?(Aptly::Configuration)
+    refute_nil ::Aptly.configuration
+    assert ::Aptly.configuration.is_a?(Aptly::Configuration)
   end
 
   def test_configuration_block
@@ -19,7 +19,7 @@ class AptlyTest < Minitest::Test
       c.host = 'localhost'
       c.port = 1234
     end
-    assert_equal 'localhost', ::Aptly.configure.host
-    assert_equal 1234, ::Aptly.configure.port
+    assert_equal 'localhost', ::Aptly.configuration.host
+    assert_equal 1234, ::Aptly.configuration.port
   end
 end

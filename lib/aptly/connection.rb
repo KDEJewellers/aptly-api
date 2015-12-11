@@ -14,8 +14,8 @@ module Aptly
 
       uri = URI.parse('')
       uri.scheme = 'http'
-      uri.host = ::Aptly.configure.host
-      uri.port = ::Aptly.configure.port
+      uri.host = ::Aptly.configuration.host
+      uri.port = ::Aptly.configuration.port
       self.class.base_uri(uri.to_s)
     end
 

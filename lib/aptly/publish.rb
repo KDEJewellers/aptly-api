@@ -1,13 +1,11 @@
 require 'ostruct'
 
-module Aptly
-  class PublishedRepository < OpenStruct
-    attr_accessor :connection
-    attr_accessor :data
+require_relative 'representation'
 
-    def initialize(connection, hash = {})
-      @connection = connection
-      super(hash)
+module Aptly
+  class PublishedRepository < Representation
+    def initialize(*args)
+      super(*args)
       self.Sources.collect! { |s| Repository.new(connection, s) }
     end
 

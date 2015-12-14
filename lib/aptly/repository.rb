@@ -2,16 +2,10 @@ require 'ostruct'
 require 'socket'
 require 'tmpdir'
 
+require_relative 'representation'
+
 module Aptly
-  class Repository < OpenStruct
-    attr_accessor :connection
-    attr_accessor :data
-
-    def initialize(connection, hash = {})
-      @connection = connection
-      super(hash)
-    end
-
+  class Repository < Representation
     # 404	repository with such name doesn’t exist
     # 409	repository can’t be dropped (reason in the message)
     def delete(**kwords)

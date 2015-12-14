@@ -1,7 +1,7 @@
 require 'ostruct'
 
 module Aptly
-  class Files < OpenStruct
+  class Files
     class << self
       # 404	directory doesn’t exist
       def upload(files, directory, connection = Connection.new, **kwords)

@@ -35,10 +35,10 @@ module Aptly
 
       relative_path = args.shift
 
-      # if symbol == :post
-      #   kwords[:headers] ||= {}
-      #   kwords[:headers].merge!('Content-Type' => 'application/json')
-      # end
+      if symbol == :post && kwords.include?(:body)
+        kwords[:headers] ||= {}
+        kwords[:headers].merge!('Content-Type' => 'application/json')
+      end
 
       connection.send(symbol, add_api(relative_path), kwords)
     end

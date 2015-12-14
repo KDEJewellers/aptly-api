@@ -39,7 +39,7 @@ class RepositoryTest < Minitest::Test
 
   def test_repo_create
     stub_request(:post, 'http://localhost/api/repos')
-      .with(body: "{\"Name\":\"kitten\"}")
+      .with(body: "{\"Name\":\"kitten\"}", headers: { 'Content-Type' => 'application/json' })
       .to_return(body: '{"Name":"kitten","Comment":"","DefaultDistribution":"","DefaultComponent":""}')
 
     repo = ::Aptly::Repository.create('kitten')

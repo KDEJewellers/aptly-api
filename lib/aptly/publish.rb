@@ -8,11 +8,12 @@ module Aptly
     def initialize(connection, hash = {})
       @connection = connection
       super(hash)
+      self.Sources.collect! { |s| Repository.new(connection, s) }
     end
 
     def drop(**kwords)
       p connection.send(:delete, "/publish/#{self.Prefix}/#{self.Distribution}",
-                      query: kwords)
+                        query: kwords)
     end
 
     class << self

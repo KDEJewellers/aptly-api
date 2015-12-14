@@ -41,6 +41,7 @@ module Aptly
       )
       response = connection.send(:post, "/publish/#{prefix}",
                                  body: JSON.generate(options))
+      PublishedRepository.new(connection, JSON.parse(response.body))
     end
   end
 end

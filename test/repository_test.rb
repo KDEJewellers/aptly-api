@@ -87,7 +87,6 @@ class RepositoryTest < Minitest::Test
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
 
     assert repo.published?
-    assert_requested(:get, 'http://localhost/api/publish')
   end
 
   def test_published_in

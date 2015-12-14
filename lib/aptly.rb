@@ -33,8 +33,6 @@ module Aptly
 
     # 400	prefix/distribution is already used by another published repository
     # 404	source snapshot/repo hasn’t been found
-    # TODO: prefix
-    # FIXME: prefix
     def publish(sources, prefix = '', source_kind = 'local', connection = Connection.new, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       options = kwords.merge(

@@ -21,6 +21,7 @@ module Aptly
     end
 
     # 404	repository with such name doesn’t exist
+    # @return [Hash] report data as specified in the API.
     def add_file(path, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       response = connection.send(:post, "/repos/#{self.Name}/file/#{path}",
@@ -39,14 +40,18 @@ module Aptly
     end
 
     # Convenience wrapper around {Aptly.publish}
+    # @return [PublishedRepository]
     def publish(prefix, **kwords)
       Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
     end
 
+    # @return [Boolean]
     def published?
       !published_in.empty?
     end
 
+    # @yieldparam pub [PublishedRepository]
+    # @return [Array<PublishedRepository>]
     def published_in
       Aptly::PublishedRepository.list(connection).select do |pub|
         pub.Sources.each do |src|

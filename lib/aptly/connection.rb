@@ -7,6 +7,7 @@ module Aptly
     # debug_output $stdout
 
     DEFAULT_QUERY = {}
+    HTTP_ACTIONS = %i(get post delete)
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
@@ -23,26 +24,23 @@ module Aptly
       @query.update(params)
     end
 
-    def get(relative_path, query: {})
-      query = @query.merge(query)
-      query = nil if query.empty?
-      connection.get(add_api(relative_path), query: query)
-    end
+    # FIXME: write integration test. just fake testing won't quite cut
+    #   it
+    def method_missing(symbol, *args, **kwords)
+      return super(symbol, *args, kwords) unless HTTP_ACTIONS.include?(symbol)
 
-    def post(relative_path, query: {}, body: nil)
-      query = @query.merge(query)
-      query = nil if query.empty?
-      connection.post(add_api(relative_path),
-                      body: body,
-                      query: query,
-                      headers: { 'Content-Type' => 'application/json' })
-    end
+      query = @query.merge(kwords.delete(:query) { {} })
+      query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      kwords[:query] = query unless query.empty?
 
-    def delete(relative_path, query: {})
-      query = @query.merge(query)
-      query = nil if query.empty?
-      connection.delete(add_api(relative_path),
-                        query: query)
+      relative_path = args.shift
+
+      # if symbol == :post
+      #   kwords[:headers] ||= {}
+      #   kwords[:headers].merge!('Content-Type' => 'application/json')
+      # end
+
+      connection.send(symbol, add_api(relative_path), kwords)
     end
 
     private

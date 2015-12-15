@@ -33,6 +33,12 @@ module Aptly
       # FIXME: delete dir?
     end
 
+    def packages(**kwords)
+      response = connection.send(:get, "/repos/#{self.Name}/packages",
+                                 query: kwords)
+      JSON.parse(response.body)
+    end
+
     # Convenience wrapper around {Aptly.publish}
     # @return [PublishedRepository]
     def publish(prefix, **kwords)

@@ -103,4 +103,14 @@ class RepositoryTest < Minitest::Test
     repo.published_in.each { yielded = true }
     assert yielded
   end
+
+  def test_packages
+    stub_request(:get, 'http://localhost/api/repos/kitten/packages')
+      .to_return(body: "[\"Pall kitteh 999:999 66f130f348dc4864\"]\n")
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    packages = repo.packages
+
+    assert_equal 1, packages.size
+  end
 end

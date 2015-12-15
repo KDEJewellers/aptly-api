@@ -20,10 +20,6 @@ module Aptly
       self.class.base_uri(uri.to_s)
     end
 
-    def query(params = {})
-      @query.update(params)
-    end
-
     def method_missing(symbol, *args, **kwords)
       return super(symbol, *args, kwords) unless HTTP_ACTIONS.include?(symbol)
 

@@ -3,6 +3,9 @@ require 'ostruct'
 require_relative 'representation'
 
 module Aptly
+  # A published repository representation.
+  # Published repositories are not {Repository} instances as they are in fact
+  # comprised of one or more different repositories.
   class PublishedRepository < Representation
     def initialize(*args)
       super(*args)

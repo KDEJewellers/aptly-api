@@ -4,11 +4,14 @@ require 'tmpdir'
 require_relative 'representation'
 
 module Aptly
+  # Aptly repository representation.
   class Repository < Representation
+    # Delete this repository.
     def delete(**kwords)
       connection.send(:delete, "/repos/#{self.Name}", query: kwords)
     end
 
+    # Add a previously uploaded file to the Repository.
     # @return [Hash] report data as specified in the API.
     def add_file(path, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h

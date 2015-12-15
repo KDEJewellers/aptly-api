@@ -20,6 +20,7 @@ require 'aptly/publish'
 require 'aptly/repository'
 require 'aptly/version'
 
+# Aptly API
 module Aptly
   class << self
     def configure
@@ -30,7 +31,12 @@ module Aptly
       @configuration ||= Configuration.new
     end
 
-    def publish(sources, prefix = '', source_kind = 'local', connection = Connection.new, **kwords)
+    # Publish 1 or more sources into a public repository prefix.
+    # @param sources [Array<Repository>] array of repositories to source
+    # @param prefix [String] the prefix to publish under
+    # @param source_kind [String] the source kind (local or snapshot)
+    def publish(sources, prefix = '', source_kind = 'local',
+                connection = Connection.new, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       options = kwords.merge(
         SourceKind: source_kind,

@@ -23,6 +23,7 @@ module Aptly
       JSON.parse(response.body)
     end
 
+    # FIXME: needs to support single files
     # Convenience wrapper around {Files.upload} and {#add_file}
     def upload(files)
       prefix = "#{self.class.to_s.tr(':', '_')}-#{Socket.gethostname}-"

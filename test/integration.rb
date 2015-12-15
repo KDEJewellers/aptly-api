@@ -82,7 +82,7 @@ class RepositoryTest < Minitest::Test
 
   def test_x
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'trull')
-    assert_raises ::Aptly::NotFoundError do
+    assert_raises ::Aptly::Errors::NotFoundError do
       repo.delete
     end
   end

@@ -1,6 +1,6 @@
 require 'httmultiparty'
 
-require_relative 'error'
+require_relative 'errors'
 
 module Aptly
   class Connection
@@ -12,11 +12,11 @@ module Aptly
     HTTP_ACTIONS = %i(get post delete)
 
     CODE_ERRORS = {
-      400 => ClientError,
-      401 => UnauthorizedError,
-      404 => NotFoundError,
-      409 => ConflictError,
-      500 => ServerError
+      400 => Errors::ClientError,
+      401 => Errors::UnauthorizedError,
+      404 => Errors::NotFoundError,
+      409 => Errors::ConflictError,
+      500 => Errors::ServerError
     }
 
     def initialize(**kwords)

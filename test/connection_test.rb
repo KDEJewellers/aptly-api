@@ -22,19 +22,19 @@ class ConnectionTest < Minitest::Test
       .to_return(status: 500, body: "[{\"error\":\"server error\",\"meta\":\"aborted\"}]\n")
     connection = ::Aptly::Connection.new
 
-    assert_raises ::Aptly::ClientError do
+    assert_raises ::Aptly::Errors::ClientError do
       connection.send(:http_call, :get, '/api/400', {})
     end
-    assert_raises ::Aptly::UnauthorizedError do
+    assert_raises ::Aptly::Errors::UnauthorizedError do
       connection.send(:http_call, :get, '/api/401', {})
     end
-    assert_raises ::Aptly::NotFoundError do
+    assert_raises ::Aptly::Errors::NotFoundError do
       connection.send(:http_call, :get, '/api/404', {})
     end
-    assert_raises ::Aptly::ConflictError do
+    assert_raises ::Aptly::Errors::ConflictError do
       connection.send(:http_call, :get, '/api/409', {})
     end
-    assert_raises ::Aptly::ServerError do
+    assert_raises ::Aptly::Errors::ServerError do
       connection.send(:http_call, :get, '/api/500', {})
     end
   end

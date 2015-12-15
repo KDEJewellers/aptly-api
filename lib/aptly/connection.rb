@@ -24,8 +24,6 @@ module Aptly
       @query.update(params)
     end
 
-    # FIXME: write integration test. just fake testing won't quite cut
-    #   it
     def method_missing(symbol, *args, **kwords)
       return super(symbol, *args, kwords) unless HTTP_ACTIONS.include?(symbol)
 

@@ -15,7 +15,6 @@ module Aptly
     end
 
     class << self
-      # 404	directory doesn’t exist
       def list(connection = Connection.new, **kwords)
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:get, '/publish',

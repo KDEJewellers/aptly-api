@@ -6,15 +6,10 @@ require_relative 'representation'
 
 module Aptly
   class Repository < Representation
-    # 404	repository with such name doesn’t exist
-    # 409	repository can’t be dropped (reason in the message)
     def delete(**kwords)
-      connection.send(:delete, "/repos/#{self.Name}",
-                      query: kwords)
-      # 409 #<HTTParty::Response:0x25381d8 parsed_response=[{"error"=>"unable to drop, local repo is published", "meta"=>"Operation aborted"}], @response=#<Net::HTTPConflict 409 Conflict readbody=true>, @headers={"content-type"=>["application/json; charset=utf-8"], "date"=>["Fri, 11 Dec 2015 11:28:39 GMT"], "content-length"=>["81"]}>
+      connection.send(:delete, "/repos/#{self.Name}", query: kwords)
     end
 
-    # 404	repository with such name doesn’t exist
     # @return [Hash] report data as specified in the API.
     def add_file(path, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
@@ -65,7 +60,6 @@ module Aptly
 
     class << self
       # FIXME: This mixes representation with client, is that good?
-      # 404	repository with such name doesn’t exist
       def get(name, connection = Connection.new, **kwords)
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:get, "/repos/#{name}",
@@ -73,7 +67,6 @@ module Aptly
         new(connection, JSON.parse(response.body))
       end
 
-      # 400	repository with such name already exists
       def create(name, connection = Connection.new, **kwords)
         options = kwords.merge(name: name)
         options = options.map { |k, v| [k.to_s.capitalize, v] }.to_h

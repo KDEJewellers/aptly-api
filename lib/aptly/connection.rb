@@ -1,5 +1,7 @@
 require 'httmultiparty'
 
+require_relative 'error'
+
 module Aptly
   class Connection
     include HTTMultiParty
@@ -8,6 +10,14 @@ module Aptly
 
     DEFAULT_QUERY = {}
     HTTP_ACTIONS = %i(get post delete)
+
+    CODE_ERRORS = {
+      400 => ClientError,
+      401 => UnauthorizedError,
+      404 => NotFoundError,
+      409 => ConflictError,
+      500 => ServerError
+    }
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
@@ -33,7 +43,7 @@ module Aptly
         kwords[:headers].merge!('Content-Type' => 'application/json')
       end
 
-      connection.send(symbol, add_api(relative_path), kwords)
+      http_call(symbol, add_api(relative_path), kwords)
     end
 
     private
@@ -48,6 +58,13 @@ module Aptly
 
     def add_api(relative_path)
       "/api#{relative_path}"
+    end
+
+    def http_call(symbol, path, kwords)
+      response = connection.send(symbol, path, kwords)
+      error = CODE_ERRORS.fetch(response.code, nil)
+      fail error, response.body if error
+      response
     end
   end
 end

@@ -27,9 +27,8 @@ module Aptly
     def method_missing(symbol, *args, **kwords)
       return super(symbol, *args, kwords) unless HTTP_ACTIONS.include?(symbol)
 
-      query = @query.merge(kwords.delete(:query) { {} })
-      query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
-      kwords[:query] = query unless query.empty?
+      kwords[:query] = build_query(kwords)
+      kwords.delete(:query) if kwords[:query].empty?
 
       relative_path = args.shift
 
@@ -44,6 +43,12 @@ module Aptly
     private
 
     attr_reader :connection
+
+    def build_query(kwords)
+      query = @query.merge(kwords.delete(:query) { {} })
+      query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      query
+    end
 
     def add_api(relative_path)
       "/api#{relative_path}"

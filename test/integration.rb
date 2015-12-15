@@ -79,6 +79,13 @@ class RepositoryTest < Minitest::Test
     assert repo.published?
     refute repo.published_in.empty?
   end
+
+  def test_x
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'trull')
+    assert_raises ::Aptly::NotFoundError do
+      repo.delete
+    end
+  end
 end
 
 BEGIN {

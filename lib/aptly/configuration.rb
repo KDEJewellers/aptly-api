@@ -1,4 +1,5 @@
 module Aptly
+  # Configuration.
   class Configuration
     attr_accessor :host
     attr_accessor :port

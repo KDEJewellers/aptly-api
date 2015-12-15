@@ -1,4 +1,6 @@
 module Aptly
+  # Aptly files management.
+  # http://www.aptly.info/doc/api/files/
   class Files
     class << self
       # 404	directory doesn’t exist
@@ -9,7 +11,7 @@ module Aptly
           kwords["file#{i += 1}".to_sym] = File.new(f)
         end
         response = connection.send(:post, "/files/#{directory}",
-                                   query: kwords)
+                                   body: kwords)
         JSON.parse(response.body)
       end
     end

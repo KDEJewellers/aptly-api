@@ -1,4 +1,6 @@
 require 'faraday'
+require 'json'
+require 'uri'
 
 require_relative 'errors'
 

@@ -8,10 +8,10 @@ module Aptly
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         i = 0
         files.each do |f|
-          kwords["file#{i += 1}".to_sym] = File.new(f)
+          kwords["file_#{i += 1}".to_sym] = f
         end
         response = connection.send(:post, "/files/#{directory}",
-                                   body: kwords)
+                                   kwords)
         JSON.parse(response.body)
       end
     end

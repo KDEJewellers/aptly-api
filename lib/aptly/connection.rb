@@ -1,15 +1,13 @@
-require 'httmultiparty'
+require 'faraday'
 
 require_relative 'errors'
 
 module Aptly
   class Connection
-    include HTTMultiParty
-
-    # debug_output $stdout
-
     DEFAULT_QUERY = {}
-    HTTP_ACTIONS = %i(get post delete)
+    GETISH_ACTIONS = %i(get delete)
+    POSTISH_ACTIONS = %i(post)
+    HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
 
     CODE_ERRORS = {
       400 => Errors::ClientError,
@@ -21,13 +19,17 @@ module Aptly
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
-      @connection = self.class
 
       uri = URI.parse('')
       uri.scheme = 'http'
       uri.host = ::Aptly.configuration.host
       uri.port = ::Aptly.configuration.port
-      self.class.base_uri(uri.to_s)
+
+      @connection = Faraday.new(url: uri.to_s) do |c|
+        c.request :multipart
+        c.request :url_encoded
+        c.adapter :net_http
+      end
     end
 
     def method_missing(symbol, *args, **kwords)
@@ -37,12 +39,6 @@ module Aptly
       kwords.delete(:query) if kwords[:query].empty?
 
       relative_path = args.shift
-
-      if symbol == :post && kwords.include?(:body)
-        kwords[:headers] ||= {}
-        kwords[:headers].merge!('Content-Type' => 'application/json')
-      end
-
       http_call(symbol, add_api(relative_path), kwords)
     end
 
@@ -60,9 +56,47 @@ module Aptly
       "/api#{relative_path}"
     end
 
-    def http_call(symbol, path, kwords)
-      response = connection.send(symbol, path, kwords)
-      error = CODE_ERRORS.fetch(response.code, nil)
+    def mangle_post(body, headers, kwords)
+      if body
+        headers ||= {}
+        headers.merge!('Content-Type' => 'application/json')
+      else
+        kwords.each do |k, v|
+          if k.to_s.start_with?('file_')
+            body ||= {}
+            body[k] = Faraday::UploadIO.new(v, 'application/binary')
+          end
+        end
+      end
+      [body, headers]
+    end
+
+    def run_postish(action, path, kwords)
+      body = kwords.delete(:body)
+      headers = kwords.delete(:headers)
+
+      if action == :post
+        body, headers = mangle_post(body, headers, kwords)
+      end
+
+      connection.send(action, path, body, headers)
+    end
+
+    def run_getish(action, path, kwords)
+      params = kwords.delete(:query)
+      headers = kwords.delete(:headers)
+      connection.send(action, path, params, headers)
+    end
+
+    def http_call(action, path, kwords)
+      if POSTISH_ACTIONS.include?(action)
+        response = run_postish(action, path, kwords)
+      elsif GETISH_ACTIONS.include?(action)
+        response = run_getish(action, path, kwords)
+      else
+        fail "Unknown http action: #{action}"
+      end
+      error = CODE_ERRORS.fetch(response.status, nil)
       fail error, response.body if error
       response
     end

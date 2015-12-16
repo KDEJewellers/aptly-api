@@ -23,8 +23,16 @@ class RepositoryTest < Minitest::Test
     assert_equal '', repo.Comment
     assert_equal '', repo.DefaultDistribution
     assert_equal '', repo.DefaultComponent
+  end
 
-    assert_requested(:get, 'http://localhost/api/repos/kitten')
+  def test_repo_exist?
+    stub_request(:get, 'http://localhost/api/repos/kitten')
+      .to_return(body: '{"Name":"kitten","Comment":"","DefaultDistribution":"","DefaultComponent":""}')
+    stub_request(:get, 'http://localhost/api/repos/missing-repo')
+      .to_return(status: 404)
+
+    assert ::Aptly::Repository.exist?('kitten')
+    refute ::Aptly::Repository.exist?('missing-repo')
   end
 
   def test_repo_delete

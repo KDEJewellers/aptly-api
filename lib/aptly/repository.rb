@@ -76,6 +76,16 @@ module Aptly
                                    body: JSON.generate(options))
         new(connection, JSON.parse(response.body))
       end
+
+      # Check if a repository exists.
+      # @param name [String] the name of the repository which might exist
+      # @return [Boolean] whether or not the repositoryexists
+      def exist?(name, connection = Connection.new, **kwords)
+        get(name, connection, **kwords)
+        true
+      rescue Aptly::Errors::NotFoundError
+        false
+      end
     end
   end
 end

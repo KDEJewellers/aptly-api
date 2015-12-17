@@ -27,14 +27,14 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.10'
-  spec.add_development_dependency 'coveralls'
-  spec.add_development_dependency 'minitest'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rake-notes'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'webmock'
-  spec.add_development_dependency 'yard'
+  spec.add_development_dependency 'bundler', '~> 1.11'
+  spec.add_development_dependency 'coveralls', '~> 0.8'
+  spec.add_development_dependency 'minitest', '~> 5.8'
+  spec.add_development_dependency 'rake', '~> 10.4'
+  spec.add_development_dependency 'rake-notes', '~> 0.2'
+  spec.add_development_dependency 'simplecov', '~> 0.11'
+  spec.add_development_dependency 'webmock', '~> 1.22'
+  spec.add_development_dependency 'yard', '~> 0.8'
 
-  spec.add_dependency 'faraday'
+  spec.add_dependency 'faraday', '~> 0.9'
 end

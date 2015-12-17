@@ -8,7 +8,7 @@ module Aptly
   class Connection
     DEFAULT_QUERY = {}
     GETISH_ACTIONS = %i(get delete)
-    POSTISH_ACTIONS = %i(post)
+    POSTISH_ACTIONS = %i(post put)
     HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
 
     CODE_ERRORS = {
@@ -77,10 +77,9 @@ module Aptly
       body = kwords.delete(:body)
       headers = kwords.delete(:headers)
 
-      if action == :post
-        body, headers = mangle_post(body, headers, kwords)
-      end
+      body, headers = mangle_post(body, headers, kwords)
 
+      puts "connection.send(#{action}, #{path}, #{body}, #{headers})"
       connection.send(action, path, body, headers)
     end
 

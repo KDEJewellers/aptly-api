@@ -13,8 +13,17 @@ module Aptly
     end
 
     def drop(**kwords)
-      p connection.send(:delete, "/publish/#{self.Prefix}/#{self.Distribution}",
-                        query: kwords)
+      connection.send(:delete, "/publish/#{self.Prefix}/#{self.Distribution}",
+                      query: kwords)
+    end
+
+    # Update this published repository using new contents of Sources
+    # @note this possibly mutates the attributes depending on the HTTP response
+    def update!(**kwords)
+      response = connection.send(:put,
+                                 "/publish/#{self.Prefix}/#{self.Distribution}",
+                                 body: JSON.generate(kwords))
+      marshal_load(JSON.parse(response.body))
     end
 
     class << self

@@ -21,15 +21,25 @@ module Aptly
 
     # Raised when a file operation had an error.
     class RepositoryFileError < StandardError
+      # @!attribute [r] failures
+      #   @return [Array<String>] list of failed files
       attr_accessor :failures
+
+      # @!attribute [r] warnings
+      #   @return [Array<String>] warnings from remote (one per file generally)
       attr_accessor :warnings
 
+      # Create a new error instance.
+      # @param failures see {#failures}
+      # @param warnings see {#warnings}
+      # @param args forwarded to super
       def initialize(failures, warnings, *args)
         super(*args)
         @failures = failures
         @warnings = warnings
       end
 
+      # @return [String] (formatted) string representation
       def to_s
         <<-EOF
 
@@ -43,6 +53,11 @@ module Aptly
       end
 
       class << self
+        # Construct a new instance from a hash
+        # @param hash a file operation repsonse hash
+        # @return [RepositoryFileError] new error
+        # @return [nil] if error is not applicable (hash has empty FailedFiles
+        #   array)
         def from_hash(hash, *args)
           return nil if hash['FailedFiles'].empty?
           new(hash['FailedFiles'], hash['Report']['Warnings'], *args)

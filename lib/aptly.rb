@@ -36,6 +36,7 @@ module Aptly
     # @param sources [Array<Repository>] array of repositories to source
     # @param prefix [String] the prefix to publish under
     # @param source_kind [String] the source kind (local or snapshot)
+    # @return [PublishedRepository] newly published repository
     def publish(sources, prefix = '', source_kind = 'local',
                 connection = Connection.new, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h

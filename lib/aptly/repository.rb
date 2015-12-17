@@ -36,14 +36,18 @@ module Aptly
       # FIXME: delete dir?
     end
 
+    # List all packages in the repository
+    # @return [Array<String>] list of packages in the repository
     def packages(**kwords)
       response = connection.send(:get, "/repos/#{self.Name}/packages",
                                  query: kwords)
       JSON.parse(response.body)
     end
 
-    # Convenience wrapper around {Aptly.publish}
-    # @return [PublishedRepository]
+    # Convenience wrapper around {Aptly.publish}, publishing this repository
+    # locally and as only source of prefix.
+    # @param prefix [String] prefix to publish under (i.e. published repo name)
+    # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
       Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
     end

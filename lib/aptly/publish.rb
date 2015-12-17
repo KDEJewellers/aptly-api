@@ -22,11 +22,16 @@ module Aptly
 
     # Update this published repository using new contents of Sources
     # @note this possibly mutates the attributes depending on the HTTP response
+    # @return [self] if the instance data was mutated
+    # @return [nil] if the instance data was not mutated
     def update!(**kwords)
       response = connection.send(:put,
                                  "/publish/#{self.Prefix}/#{self.Distribution}",
                                  body: JSON.generate(kwords))
-      marshal_load(JSON.parse(response.body))
+      hash = JSON.parse(response.body)
+      return nil if hash == marshal_dump
+      marshal_load(hash)
+      self
     end
 
     class << self

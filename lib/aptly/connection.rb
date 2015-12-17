@@ -5,6 +5,9 @@ require 'uri'
 require_relative 'errors'
 
 module Aptly
+  # Connection adaptor.
+  # This class wraps HTTP interactions for our purposes and adds general purpose
+  # automation on top of the raw HTTP actions.
   class Connection
     DEFAULT_QUERY = {}
     GETISH_ACTIONS = %i(get delete)

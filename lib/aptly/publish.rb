@@ -30,6 +30,8 @@ module Aptly
     end
 
     class << self
+      # List all published repositories.
+      # @return [Array<PublishedRepository>] list of repositories
       def list(connection = Connection.new, **kwords)
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:get, '/publish',

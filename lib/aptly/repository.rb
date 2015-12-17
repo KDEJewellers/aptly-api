@@ -53,6 +53,12 @@ module Aptly
       !published_in.empty?
     end
 
+    # Lists all PublishedRepositories self is published in. Namely self must
+    # be a source of the published repository in order for it to appear here.
+    # This method always returns an array of affected published repositories.
+    # If you use this method with a block it will additionally yield each
+    # published repository that would appear in the array, making it a shorthand
+    # for {Array#each}.
     # @yieldparam pub [PublishedRepository]
     # @return [Array<PublishedRepository>]
     def published_in
@@ -66,7 +72,10 @@ module Aptly
     end
 
     class << self
-      # FIXME: This mixes representation with client, is that good?
+      # Get a {Repository} instance if the repository already exists.
+      # @param name [String] name of the repository
+      # @param connection [Connection] connection to use for the instance
+      # @return {Repository} instance if it exists
       def get(name, connection = Connection.new, **kwords)
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:get, "/repos/#{name}",
@@ -74,6 +83,10 @@ module Aptly
         new(connection, JSON.parse(response.body))
       end
 
+      # Creates a new {Repository}
+      # @param name [String] name fo the repository
+      # @param connection [Connection] connection to use for the instance
+      # @return {Repository} newly created instance
       def create(name, connection = Connection.new, **kwords)
         options = kwords.merge(name: name)
         options = options.map { |k, v| [k.to_s.capitalize, v] }.to_h
@@ -84,6 +97,7 @@ module Aptly
 
       # Check if a repository exists.
       # @param name [String] the name of the repository which might exist
+      # @param connection [Connection] connection to use for the instance
       # @return [Boolean] whether or not the repositoryexists
       def exist?(name, connection = Connection.new, **kwords)
         get(name, connection, **kwords)

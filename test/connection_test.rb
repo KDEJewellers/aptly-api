@@ -38,4 +38,12 @@ class ConnectionTest < Minitest::Test
       connection.send(:http_call, :get, '/api/500', {})
     end
   end
+
+  def test_invalid_action
+    connection = ::Aptly::Connection.new
+
+    assert_raises RuntimeError do
+      connection.send(:http_call, :yoloaction, nil, nil)
+    end
+  end
 end

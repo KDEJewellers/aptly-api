@@ -85,7 +85,12 @@ class RepositoryTest < Minitest::Test
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
 
     assert_raises ::Aptly::Errors::RepositoryFileError do
-      report = repo.upload([debfile])
+      begin
+        repo.upload([debfile])
+      rescue ::Aptly::Errors::RepositoryFileError => e
+        e.to_s
+        raise e
+      end
     end
   end
 

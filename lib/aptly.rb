@@ -15,6 +15,7 @@
 
 require 'aptly/configuration'
 require 'aptly/connection'
+require 'aptly/errors'
 require 'aptly/files'
 require 'aptly/publish'
 require 'aptly/repository'

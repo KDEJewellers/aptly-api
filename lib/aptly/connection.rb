@@ -82,7 +82,6 @@ module Aptly
 
       body, headers = mangle_post(body, headers, kwords)
 
-      puts "connection.send(#{action}, #{path}, #{body}, #{headers})"
       connection.send(action, path, body, headers)
     end
 

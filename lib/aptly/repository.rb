@@ -6,6 +6,7 @@ require_relative 'representation'
 
 module Aptly
   # Aptly repository representation.
+  # @see http://www.aptly.info/doc/api/repos/
   class Repository < Representation
     # Delete this repository.
     def delete(**kwords)

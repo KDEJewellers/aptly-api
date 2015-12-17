@@ -1,6 +1,6 @@
 module Aptly
   # Aptly files management.
-  # http://www.aptly.info/doc/api/files/
+  # @see http://www.aptly.info/doc/api/files/
   class Files
     class << self
       # 404	directory doesn’t exist

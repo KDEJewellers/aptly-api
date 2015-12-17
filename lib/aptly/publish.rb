@@ -6,12 +6,15 @@ module Aptly
   # A published repository representation.
   # Published repositories are not {Repository} instances as they are in fact
   # comprised of one or more different repositories.
+  # @see http://www.aptly.info/doc/api/publish/
   class PublishedRepository < Representation
     def initialize(*args)
       super(*args)
       self.Sources.collect! { |s| Repository.new(connection, s) }
     end
 
+    # Drops a published repository. This removes the published repository
+    # but leaves its soures intact.
     def drop(**kwords)
       connection.send(:delete, "/publish/#{self.Prefix}/#{self.Distribution}",
                       query: kwords)

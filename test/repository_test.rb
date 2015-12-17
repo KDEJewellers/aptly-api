@@ -64,14 +64,29 @@ class RepositoryTest < Minitest::Test
     stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
       .with(headers: {'Content-Type'=>'multipart/form-data; boundary=-----------RubyMultipartPost'})
       .to_return(body: '["Aptly__Repository/kitteh.deb"]')
-    stub_request(:post, "http://localhost/api/repos/kitten/file/Aptly__Repository/kitteh.deb")
-      .to_return(body: '{}')
+      stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
+      .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
 
-    repo.upload([debfile])
+    report = repo.upload([debfile])
 
-    assert_requested(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
-    assert_requested(:post, "http://localhost/api/repos/kitten/file/Aptly__Repository/kitteh.deb")
+    assert report.is_a?(Array)
+    assert_equal 1, report.size
+    assert_equal 'gpgmepp_15.08.2+git20151212.1109+15.04-0_source added', report[0]
+  end
+
+  def test_erroring_upload
+    debfile = File.join(__dir__, 'data', 'kitteh.deb')
+    stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
+      .with(headers: {'Content-Type'=>'multipart/form-data; boundary=-----------RubyMultipartPost'})
+      .to_return(body: '["Aptly__Repository/kitteh.deb"]')
+    stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
+      .to_return(body: "{\"FailedFiles\":[\"/home/nci/aptly/upload/brum/kitteh.deb\"],\"Report\":{\"Warnings\":[\"Unable to process /home/nci/aptly/upload/Aptly__Repository-smith-20151217-14879-7cq2c8/gpgmepp_15.08.2+git20151212.1109+15.04.orig.tar.xz: stat /home/nci/aptly/upload/Aptly__Repository-smith-20151217-14879-7cq2c8/gpgmepp_15.08.2+git20151212.1109+15.04.orig.tar.xz: no such file or directory\"],\"Added\":[],\"Removed\":[]}}\n")
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    assert_raises ::Aptly::Errors::RepositoryFileError do
+      report = repo.upload([debfile])
+    end
   end
 
   def test_publish

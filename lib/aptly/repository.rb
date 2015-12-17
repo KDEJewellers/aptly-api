@@ -1,6 +1,7 @@
 require 'socket'
 require 'tmpdir'
 
+require_relative 'errors'
 require_relative 'representation'
 
 module Aptly
@@ -13,11 +14,14 @@ module Aptly
 
     # Add a previously uploaded file to the Repository.
     # @return [Hash] report data as specified in the API.
+    # FIXME: this should be called file
     def add_file(path, **kwords)
-      kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       response = connection.send(:post, "/repos/#{self.Name}/file/#{path}",
                                  query: kwords)
-      JSON.parse(response.body)
+      hash = JSON.parse(response.body)
+      error = Errors::RepositoryFileError.from_hash(hash)
+      fail error if error
+      hash['Report']['Added']
     end
 
     # FIXME: needs to support single files
@@ -25,8 +29,8 @@ module Aptly
     def upload(files)
       prefix = "#{self.class.to_s.tr(':', '_')}-#{Socket.gethostname}-"
       directory = Dir::Tmpname.make_tmpname(prefix, nil)
-      files = Files.upload(files, directory, connection)
-      files.each { |f| add_file(f) }
+      Files.upload(files, directory, connection)
+      add_file(directory)
     ensure
       # FIXME: delete dir?
     end

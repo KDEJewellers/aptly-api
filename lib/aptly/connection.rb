@@ -49,8 +49,6 @@ module Aptly
 
     private
 
-    attr_reader :connection
-
     def build_query(kwords)
       query = @query.merge(kwords.delete(:query) { {} })
       query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
@@ -82,13 +80,13 @@ module Aptly
 
       body, headers = mangle_post(body, headers, kwords)
 
-      connection.send(action, path, body, headers)
+      @connection.send(action, path, body, headers)
     end
 
     def run_getish(action, path, kwords)
       params = kwords.delete(:query)
       headers = kwords.delete(:headers)
-      connection.send(action, path, params, headers)
+      @connection.send(action, path, params, headers)
     end
 
     def http_call(action, path, kwords)

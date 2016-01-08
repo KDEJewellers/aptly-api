@@ -102,7 +102,7 @@ module Aptly
       # Check if a repository exists.
       # @param name [String] the name of the repository which might exist
       # @param connection [Connection] connection to use for the instance
-      # @return [Boolean] whether or not the repositoryexists
+      # @return [Boolean] whether or not the repository exists
       def exist?(name, connection = Connection.new, **kwords)
         get(name, connection, **kwords)
         true

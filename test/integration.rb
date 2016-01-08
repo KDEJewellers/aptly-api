@@ -82,7 +82,7 @@ class RepositoryTest < Minitest::Test
     refute repo.published_in.empty?
   end
 
-  def test_repo_list
+  def test_fff_repo_list
     list = ::Aptly::Repository.list
 
     assert_equal(1, list.size)

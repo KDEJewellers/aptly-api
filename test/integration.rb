@@ -80,6 +80,14 @@ class RepositoryTest < Minitest::Test
     refute repo.published_in.empty?
   end
 
+  def test_repo_list
+    list = ::Aptly::Repository.list
+
+    assert_equal(1, list.size)
+    assert(list[0].is_a?(::Aptly::Repository))
+    assert_equal('kitten', list[0].Name)
+  end
+
   def test_x
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'trull')
     assert_raises ::Aptly::Errors::NotFoundError do

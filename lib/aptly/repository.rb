@@ -109,6 +109,14 @@ module Aptly
       rescue Aptly::Errors::NotFoundError
         false
       end
+
+      # List all known repositories.
+      # @param connection [Connection] connection to use for the instance
+      # @return [Array<Repository>] all known repositories
+      def list(connection = Connection.new, **kwords)
+        response = connection.send(:get, '/repos', query: kwords)
+        JSON.parse(response.body).collect { |r| new(connection, r) }
+      end
     end
   end
 end

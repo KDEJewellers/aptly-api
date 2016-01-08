@@ -141,4 +141,15 @@ class RepositoryTest < Minitest::Test
 
     assert_equal 1, packages.size
   end
+
+  def test_list
+    stub_request(:get, 'http://localhost/api/repos')
+      .to_return(body: "[{\"Name\":\"kitten\",\"Comment\":\"\",\"DefaultDistribution\":\"\",\"DefaultComponent\":\"\"}]\n")
+
+    list = ::Aptly::Repository.list
+
+    assert_equal(1, list.size)
+    assert(list[0].is_a?(::Aptly::Repository))
+    assert_equal('kitten', list[0].Name)
+  end
 end

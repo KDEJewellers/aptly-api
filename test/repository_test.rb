@@ -146,7 +146,7 @@ class RepositoryTest < Minitest::Test
     # .packages parameters aren't meant to get mangled (upcased) as other
     # parameters would be
     stub_request(:get, 'http://localhost/api/repos/kitten/packages?q=dog')
-      .to_return(body: "[\"\"]\n")
+      .to_return(body: "[]\n")
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
 
     packages = repo.packages(q: 'dog')

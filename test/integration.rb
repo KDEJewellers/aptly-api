@@ -58,6 +58,8 @@ class RepositoryTest < Minitest::Test
     packages = repo.packages
     refute_nil packages
     assert_equal 1, packages.size
+
+    assert_equal([], repo.packages(q: 'dog'))
   end
 
   def test_ccc_repo_not_published

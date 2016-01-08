@@ -40,7 +40,8 @@ module Aptly
     # @return [Array<String>] list of packages in the repository
     def packages(**kwords)
       response = connection.send(:get, "/repos/#{self.Name}/packages",
-                                 query: kwords)
+                                 query: kwords,
+                                 query_mangle: false)
       JSON.parse(response.body)
     end
 

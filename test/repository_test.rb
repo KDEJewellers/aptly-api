@@ -142,6 +142,19 @@ class RepositoryTest < Minitest::Test
     assert_equal 1, packages.size
   end
 
+  def test_packages_query
+    # .packages parameters aren't meant to get mangled (upcased) as other
+    # parameters would be
+    stub_request(:get, 'http://localhost/api/repos/kitten/packages?q=dog')
+      .to_return(body: "[\"\"]\n")
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    packages = repo.packages(q: 'dog')
+
+    assert_equal(0, packages.size)
+    assert_requested(:get, 'http://localhost/api/repos/kitten/packages?q=dog')
+  end
+
   def test_list
     stub_request(:get, 'http://localhost/api/repos')
       .to_return(body: "[{\"Name\":\"kitten\",\"Comment\":\"\",\"DefaultDistribution\":\"\",\"DefaultComponent\":\"\"}]\n")

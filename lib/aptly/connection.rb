@@ -51,7 +51,9 @@ module Aptly
 
     def build_query(kwords)
       query = @query.merge(kwords.delete(:query) { {} })
-      query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      if kwords.delete(:query_mangle) { true }
+        query = query.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      end
       query
     end
 

@@ -165,4 +165,40 @@ class RepositoryTest < Minitest::Test
     assert(list[0].is_a?(::Aptly::Repository))
     assert_equal('kitten', list[0].Name)
   end
+
+  def test_add_package
+    stub_request(:post, 'http://localhost/api/repos/kitten/packages')
+      .with(body: "{\"PackageRefs\":[\"Pall kitteh 999:999 66f130f348dc4864\"]}",
+            headers: { 'Content-Type' => 'application/json' })
+      .to_return(status: 200)
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    packages = 'Pall kitteh 999:999 66f130f348dc4864'
+
+    repo.add_package(packages) # String
+    repo.add_package([packages]) # Array
+    repo.add_packages(packages) # Alias
+
+    assert_requested(:post, 'http://localhost/api/repos/kitten/packages',
+                     body: "{\"PackageRefs\":[\"Pall kitteh 999:999 66f130f348dc4864\"]}",
+                     times: 3)
+  end
+
+  def test_delete_package
+    stub_request(:delete, 'http://localhost/api/repos/kitten/packages')
+      .with(body: "{\"PackageRefs\":[\"Pall kitteh 999:999 66f130f348dc4864\"]}",
+            headers: { 'Content-Type' => 'application/json' })
+      .to_return(status: 200)
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    packages = 'Pall kitteh 999:999 66f130f348dc4864'
+
+    repo.delete_package(packages) # String
+    repo.delete_package([packages]) # Array
+    repo.delete_packages(packages) # Alias
+
+    assert_requested(:delete, 'http://localhost/api/repos/kitten/packages',
+                     body: "{\"PackageRefs\":[\"Pall kitteh 999:999 66f130f348dc4864\"]}",
+                     times: 3)
+  end
 end

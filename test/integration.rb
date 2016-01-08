@@ -90,6 +90,19 @@ class RepositoryTest < Minitest::Test
     assert_equal('kitten', list[0].Name)
   end
 
+  def test_ggg_repo_add_and_delete_package
+    debfile = File.join(__dir__, 'data', 'kitteh.deb')
+    repo = ::Aptly::Repository.get('kitten')
+    repo.upload([debfile])
+    packages = repo.packages
+
+    repo.delete_package(packages)
+    assert_equal([], repo.packages)
+
+    repo.add_package(packages)
+    refute_equal([], repo.packages)
+  end
+
   def test_x
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'trull')
     assert_raises ::Aptly::Errors::NotFoundError do

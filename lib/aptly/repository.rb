@@ -45,6 +45,30 @@ module Aptly
       JSON.parse(response.body)
     end
 
+    # Add a package (by key) to the repository.
+    # @param packages [Array<String>, String] a list of package keys or
+    #   a single package key to add to the repository. The package key(s)
+    #   must already be in the aptly database.
+    def add_package(packages, **kwords)
+      connection.send(:post, "/repos/#{self.Name}/packages",
+                      query: kwords,
+                      body: JSON.generate(PackageRefs: [*packages]))
+      self
+    end
+    alias_method :add_packages, :add_package
+
+    # Deletes a package (by key) from the repository.
+    # @param packages [Array<String>, String] a list of package keys or
+    #   a single package key to add to the repository. The package key(s)
+    #   must already be in the aptly database.
+    def delete_package(packages, **kwords)
+      connection.send(:delete, "/repos/#{self.Name}/packages",
+                      query: kwords,
+                      body: JSON.generate(PackageRefs: [*packages]))
+      self
+    end
+    alias_method :delete_packages, :delete_package
+
     # Convenience wrapper around {Aptly.publish}, publishing this repository
     # locally and as only source of prefix.
     # @param prefix [String] prefix to publish under (i.e. published repo name)

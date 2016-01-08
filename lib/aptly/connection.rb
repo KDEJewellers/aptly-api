@@ -86,9 +86,16 @@ module Aptly
     end
 
     def run_getish(action, path, kwords)
+      body = kwords.delete(:body)
       params = kwords.delete(:query)
       headers = kwords.delete(:headers)
-      @connection.send(action, path, params, headers)
+
+      @connection.send(action, path, params, headers) do |request|
+        if body
+          request.headers[:content_type] = 'application/json'
+          request.body = body
+        end
+      end
     end
 
     def http_call(action, path, kwords)

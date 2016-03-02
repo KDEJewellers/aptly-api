@@ -92,11 +92,11 @@ module Aptly
     # @return [Array<PublishedRepository>]
     def published_in
       Aptly::PublishedRepository.list(connection).select do |pub|
-        pub.Sources.each do |src|
-          next false unless src.Name == self.Name
-          yield repo if block_given?
-          true
+        next false unless pub.Sources.any? do |src|
+          src.Name == self.Name
         end
+        yield pub if block_given?
+        true
       end
     end
 

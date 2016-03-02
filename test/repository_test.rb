@@ -132,6 +132,59 @@ class RepositoryTest < Minitest::Test
     assert yielded
   end
 
+  def test_published_in_multiple
+    fake_listing = [
+      {
+        'Architectures' => ['all'],
+        'Distribution' => 'distro',
+        'Label' => '',
+        'Origin' => '',
+        'Prefix' => 'kewl-repo-name',
+        'SourceKind' => 'local',
+        'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
+        'Storage' => ''
+      },
+      {
+        'Architectures' => ['all'],
+        'Distribution' => 'distro',
+        'Label' => '',
+        'Origin' => '',
+        'Prefix' => 'other-repo-name',
+        'SourceKind' => 'local',
+        'Sources' => [{ 'Component' => 'main', 'Name' => 'other-repo' }],
+        'Storage' => ''
+      },
+      {
+        'Architectures' => ['all'],
+        'Distribution' => 'distro',
+        'Label' => '',
+        'Origin' => '',
+        'Prefix' => 'two-source-repo-name',
+        'SourceKind' => 'local',
+        'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' },
+                      { 'Component' => 'main', 'Name' => 'other-repo' }],
+        'Storage' => ''
+      }
+    ]
+
+    stub_request(:get, 'http://localhost/api/publish')
+      .to_return(body: JSON.generate(fake_listing))
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+
+    # returns array
+    pubs = repo.published_in
+    pubs.sort_by(&:Prefix)
+    assert_equal(2, pubs.size)
+    assert_equal('kewl-repo-name', pubs[0].Prefix)
+    assert_equal('two-source-repo-name', pubs[1].Prefix)
+    yielded = false
+
+    # yields with block
+    yielded = []
+    repo.published_in { |x| yielded << x.Prefix }
+    assert_equal(%w(kewl-repo-name two-source-repo-name), yielded.sort)
+  end
+
   def test_packages
     stub_request(:get, 'http://localhost/api/repos/kitten/packages')
       .to_return(body: "[\"Pall kitteh 999:999 66f130f348dc4864\"]\n")

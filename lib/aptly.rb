@@ -20,7 +20,6 @@ require 'aptly/files'
 require 'aptly/publish'
 require 'aptly/repository'
 require 'aptly/version'
-require 'aptly/snapshot'
 
 # Aptly API
 module Aptly

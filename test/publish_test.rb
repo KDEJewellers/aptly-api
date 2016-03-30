@@ -9,7 +9,7 @@ class PublishTest < Minitest::Test
       'Distribution' => 'distro',
       'Label' => '',
       'Origin' => '',
-      'Prefix' => 'kewl-repo-name',
+      'Prefix' => 'prefix/kewl-repo-name',
       'SourceKind' => 'local',
       'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
       'Storage' => ''
@@ -21,14 +21,14 @@ class PublishTest < Minitest::Test
   end
 
   def test_drop
-    stub_request(:delete, 'http://localhost/api/publish/kewl-repo-name/distro')
+    stub_request(:delete, 'http://localhost/api/publish/prefix_kewl-repo-name/distro')
       .to_return(body: '{}')
 
     @pub.drop
   end
 
   def test_update!
-    stub_request(:put, 'http://localhost/api/publish/kewl-repo-name/distro')
+    stub_request(:put, 'http://localhost/api/publish/prefix_kewl-repo-name/distro')
       .with(headers: { 'Content-Type' => 'application/json' })
       .to_return(body: JSON.generate(@pub.marshal_dump))
 

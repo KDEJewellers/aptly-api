@@ -14,7 +14,7 @@ module Aptly
     # Drops a published repository. This removes the published repository
     # but leaves its soures intact.
     def drop(**kwords)
-      connection.send(:delete, "/publish/#{self.Prefix}/#{self.Distribution}",
+      connection.send(:delete, "/publish/#{api_prefix}/#{self.Distribution}",
                       query: kwords)
     end
 
@@ -24,7 +24,7 @@ module Aptly
     # @return [nil] if the instance data was not mutated
     def update!(**kwords)
       response = connection.send(:put,
-                                 "/publish/#{self.Prefix}/#{self.Distribution}",
+                                 "/publish/#{api_prefix}/#{self.Distribution}",
                                  body: JSON.generate(kwords))
       hash = JSON.parse(response.body)
       return nil if hash == marshal_dump
@@ -41,6 +41,15 @@ module Aptly
                                    query: kwords)
         JSON.parse(response.body).collect { |h| new(connection, h) }
       end
+    end
+
+    private
+
+    # The API style prefix. This is the prefix with the following replacments
+    #   _ => __
+    #   / => _
+    def api_prefix
+      self.Prefix.tr('_', '__').tr('/', '_')
     end
   end
 end

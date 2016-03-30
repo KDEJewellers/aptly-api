@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module Aptly
   # Base representation class to coerce transactional types into useful
   # objects.

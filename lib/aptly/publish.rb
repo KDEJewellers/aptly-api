@@ -1,5 +1,3 @@
-require 'ostruct'
-
 require_relative 'representation'
 
 module Aptly

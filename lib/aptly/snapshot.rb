@@ -4,8 +4,9 @@ module Aptly
   # Aptly snapshots representation.
   # @see http://www.aptly.info/doc/api/snapshots/
   class Snapshot < Representation
-    # Updates a existing {Snapshot}
-    # @return {Snapshot} Updated snapshot description or name
+    # Updates this snapshot
+    # @return [self] if the instance data was mutated
+    # @return [nil] if the instance data was not mutated
     def update!(**kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       response = @connection.send(:put,
@@ -17,14 +18,14 @@ module Aptly
       self
     end
 
-    # Delete's a snapshot
+    # Delete's this snapshot
     def delete(**kwords)
       connection.send(:delete, "/snapshots/#{self.Name}",
                       query: kwords)
     end
 
-    # Find differences against another snapshot
-    # @param a {Snapshot} to diff against
+    # Find differences between this and another snapshot
+    # @param {Snapshot} to diff against
     # @return [Array<Hash>] diff between the two snashots
     def diff(other_snapshot)
       endpoint = "/snapshots/#{self.Name}/diff/#{other_snapshot.Name}"
@@ -32,7 +33,7 @@ module Aptly
       JSON.parse(response.body)
     end
 
-    # Search for a package in a snapshot
+    # Search for a package in this snapshot
     # @return [Array<String>] list of packages found
     def packages(**kwords)
       response = connection.send(:get, "/snapshots/#{self.Name}/packages",
@@ -61,7 +62,7 @@ module Aptly
 
       # Create a snapshot from package refs
       # @param name [String] name of new snapshot
-      # @return {Snapshot} representation of new snapshot
+      # @return [Snapshot] representation of new snapshot
       def create(name, connection = Connection.new, **kwords)
         kwords = kwords.merge(Name: name)
         response = connection.send(:post, '/snapshots',
@@ -71,7 +72,7 @@ module Aptly
 
       # Get a snapshot by name
       # @param [String] name of snapshot to get
-      # @return {Snapshot} representation of snapshot if snapshot was found
+      # @return [Snapshot] representation of snapshot if snapshot was found
       def get(name, connection = Connection.new)
         response = connection.send(:get, "/snapshots/#{name}")
         new(connection, JSON.parse(response.body))

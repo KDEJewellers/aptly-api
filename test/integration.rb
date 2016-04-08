@@ -145,7 +145,7 @@ class RepositoryTest < Minitest::Test
     snapshot.update!(Name: 'pony_snapshot')
     assert_equal('pony_snapshot', snapshot.Name)
 
-    diff = snapshot.diff(::Aptly::Snapshot.get('kitten_snapshot'))
+    diff = snapshot.diff(source)
     assert(diff.empty?)
   end
 

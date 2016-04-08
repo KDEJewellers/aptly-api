@@ -87,4 +87,17 @@ class SnapshotTest < Minitest::Test
     result = snapshot.packages(q: 'Name (~ matlab)')
     refute_empty(result)
   end
+
+  def test_snapshot_publish
+    stub_request(:post, 'http://localhost/api/publish/kewl-repo-name')
+      .with(body: "{\"Distribution\":\"distro\",\"Architectures\":[\"source\"],\"Signing\":{\"Skip\":true},\"SourceKind\":\"local\",\"Sources\":[{\"Name\":\"kewl-snapshot-name\"}]}")
+      .to_return(body: "{\"Architectures\":[\"source\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"local\",\"Sources\":[{\"Component\":\"main\",\"Name\":\"kitten\"}],\"Storage\":\"\"}\n")
+
+    snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kewl-snapshot-name')
+    pub = snapshot.publish('kewl-repo-name', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
+    assert pub.is_a?(::Aptly::PublishedRepository)
+    assert_equal 'distro', pub.Distribution
+    assert_equal 'kewl-repo-name', pub.Prefix
+    assert_equal %w(source), pub.Architectures
+  end
 end

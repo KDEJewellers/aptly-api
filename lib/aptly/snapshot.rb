@@ -41,6 +41,15 @@ module Aptly
       JSON.parse(response.body)
     end
 
+    # Convenience wrapper around {Aptly.publish}, publishing this snapshot
+    # locally and as only source of prefix.
+    # @param prefix [String] prefix to publish under (i.e. published snapshot name)
+    # @return [PublishedRepository] newly published repository
+    def publish(prefix, **kwords)
+      Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
+    end
+
+
     class << self
       # List all known snapshots.
       # @param connection [Connection] connection to use for the instance

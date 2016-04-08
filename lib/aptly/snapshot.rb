@@ -27,7 +27,7 @@ module Aptly
     # @param a {Snapshot} to diff against
     # @return [Array<Hash>] diff between the two snashots
     def diff(other_snapshot, connection = Connection.new)
-      endpoint = "/api/snapshots/#{self.Name}/diff/#{other_snapshot}"
+      endpoint = "/snapshots/#{self.Name}/diff/#{other_snapshot.Name}"
       response = connection.send(:get, endpoint)
       JSON.parse(response.body)
     end
@@ -35,8 +35,9 @@ module Aptly
     # Search for a package in a snapshot
     # @return [Array] list of packages found
     def search(**kwords)
-      response = connection.send(:get, "/api/snapshots/#{self.Name}/packages",
-                                 query: kwords)
+      response = connection.send(:get, "/snapshots/#{self.Name}/packages",
+                                 query: kwords,
+                                 query_mangle: false)
       JSON.parse(response.body)
     end
 
@@ -50,7 +51,6 @@ module Aptly
       end
 
       def create(connection = Connection.new, **kwords)
-        kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:post, '/snapshots',
                                    body: JSON.generate(kwords))
         new(connection, JSON.parse(response.body))

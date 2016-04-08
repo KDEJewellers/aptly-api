@@ -19,9 +19,9 @@ class SnapshotTest < Minitest::Test
   def test_snapshot_delete
     stub_request(:delete, 'http://localhost/api/snapshots/kitten')
       .to_return(body: '{}')
-    repo = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
+    snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
 
-    repo.delete
+    snapshot.delete
 
     assert_requested(:delete, 'http://localhost/api/snapshots/kitten')
   end
@@ -34,6 +34,26 @@ class SnapshotTest < Minitest::Test
   end
 
   def test_snapshot_create
+    stub_request(:post, "http://localhost/api/snapshots")
+      .with(body: "{\"Name\":\"snap10\",\"SourceSnapshots\":\"kitten\",\"Description\":\"Custom\",\"PackageRefs\":[\"Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e\"]}")
+      .to_return(body: '{"Name":"snap10","CreatedAt":"2015-02-28T20:22:13.312866396+03:00","Description":"Custom"}')
+
+    snapshot = ::Aptly::Snapshot.create(Name: 'snap10',
+                                        SourceSnapshots: 'kitten',
+                                        Description: 'Custom',
+                                        PackageRefs: ['Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e'])
+
+    assert_equal('snap10', snapshot.Name)
+    assert_equal('Custom', snapshot.Description)
+  end
+
+  def test_snapshot_diff
+    stub_request(:get, 'http://localhost/api/snapshots/kitten/diff/mouse')
+      .to_return(body: '[{"Left":null,"Right":"Pi386 zziplib-bin 0.13.56-1.1 4eb4563dc85bc3b6"},{"Left":null,"Right":"Pi386 zzuf 0.13.svn20100215-4 2abcc80de15e25f8"}]')
+    kitten_snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
+    mouse_snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'mouse')
+    diff = kitten_snapshot.diff(mouse_snapshot)
+    assert_equal(2, diff.size)
   end
 
   def test_snapshot_update
@@ -52,5 +72,20 @@ class SnapshotTest < Minitest::Test
 
     ::Aptly::Snapshot.get('kitten')
     assert_requested(:get, 'http://localhost/api/snapshots/kitten')
+  end
+
+  def test_snapshot_search
+    stub_request(:get, "http://localhost/api/snapshots/kitten/packages")
+      .to_return(body: '["Pi386 basilisk2 0.9.20120331-2 86c3e67a4743361f","Pi386 gtktrain 0.9b-13 8770e2e7bfb66bad","Pi386 microcode.ctl 1.18~0+nmu2 5974bce6bd6dbc9e"]')
+
+    stub_request(:get, "http://localhost/api/snapshots/kitten/packages?q=Name%20(~%20matlab)")
+      .to_return(body: '["Pall matlab-support 0.0.18 c19e7719c5f39ba0","Pall dynare-matlab 4.3.0-2 e0672404f552bd85","Pall matlab-gdf 0.1.2-2 e5d967263b9047e7"]')
+
+    snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
+    result = snapshot.search
+    refute_empty(result)
+
+    result = snapshot.search(q: 'Name (~ matlab)')
+    refute_empty(result)
   end
 end

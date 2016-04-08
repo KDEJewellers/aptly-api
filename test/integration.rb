@@ -147,6 +147,10 @@ class RepositoryTest < Minitest::Test
 
     diff = snapshot.diff(source)
     assert(diff.empty?)
+
+    pub = snapshot.publish('pony', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
+    refute_nil(pub)
+    assert_equal('pony', pub.Prefix)
   end
 
   def test_x

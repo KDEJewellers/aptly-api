@@ -33,7 +33,7 @@ module Aptly
     end
 
     # Search for a package in a snapshot
-    # @return [Array] list of packages found
+    # @return [Array<String>] list of packages found
     def packages(**kwords)
       response = connection.send(:get, "/snapshots/#{self.Name}/packages",
                                  query: kwords,
@@ -50,12 +50,19 @@ module Aptly
         JSON.parse(response.body).collect { |r| new(connection, r) }
       end
 
-      def create(connection = Connection.new, **kwords)
+      # Create a snapshot from package refs
+      # @param name [String] name of new snapshot
+      # @return {Snapshot} representation of new snapshot
+      def create(name, connection = Connection.new, **kwords)
+        kwords = kwords.merge(Name: name)
         response = connection.send(:post, '/snapshots',
                                    body: JSON.generate(kwords))
         new(connection, JSON.parse(response.body))
       end
 
+      # Get a snapshot by name
+      # @param [String] name of snapshot to get
+      # @return {Snapshot} representation of snapshot if snapshot was found
       def get(name, connection = Connection.new)
         response = connection.send(:get, "/snapshots/#{name}")
         new(connection, JSON.parse(response.body))

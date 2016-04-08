@@ -35,10 +35,10 @@ class SnapshotTest < Minitest::Test
 
   def test_snapshot_create
     stub_request(:post, "http://localhost/api/snapshots")
-      .with(body: "{\"Name\":\"snap10\",\"SourceSnapshots\":\"kitten\",\"Description\":\"Custom\",\"PackageRefs\":[\"Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e\"]}")
+      .with(body: "{\"SourceSnapshots\":\"kitten\",\"Description\":\"Custom\",\"PackageRefs\":[\"Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e\"],\"Name\":\"snap10\"}")
       .to_return(body: '{"Name":"snap10","CreatedAt":"2015-02-28T20:22:13.312866396+03:00","Description":"Custom"}')
 
-    snapshot = ::Aptly::Snapshot.create(Name: 'snap10',
+    snapshot = ::Aptly::Snapshot.create('snap10',
                                         SourceSnapshots: 'kitten',
                                         Description: 'Custom',
                                         PackageRefs: ['Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e'])

@@ -1,7 +1,5 @@
 require_relative 'test_helper'
 
-require_relative '../lib/aptly/snapshot'
-
 class SnapshotTest < Minitest::Test
   def setup
     WebMock.disable_net_connect!

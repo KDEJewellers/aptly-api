@@ -26,9 +26,9 @@ module Aptly
     # Find differences against another snapshot
     # @param a {Snapshot} to diff against
     # @return [Array<Hash>] diff between the two snashots
-    def diff(other_snapshot, connection = Connection.new)
+    def diff(other_snapshot)
       endpoint = "/snapshots/#{self.Name}/diff/#{other_snapshot.Name}"
-      response = connection.send(:get, endpoint)
+      response = @connection.send(:get, endpoint)
       JSON.parse(response.body)
     end
 

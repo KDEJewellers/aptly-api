@@ -11,7 +11,7 @@ module Aptly
       response = @connection.send(:put,
                                   "/snapshots/#{self.Name}",
                                   body: JSON.generate(kwords))
-      hash = JSON.parse(response.body)
+      hash = JSON.parse(response.body, symbolize_names: true)
       return nil if hash == marshal_dump
       marshal_load(hash)
       self

@@ -46,7 +46,7 @@ module Aptly
     # @param prefix [String] prefix to publish under (i.e. published snapshot name)
     # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
-      Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
+      Aptly.publish([{ Name: self.Name }], prefix, 'snapshot', kwords)
     end
 
 

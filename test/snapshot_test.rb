@@ -90,7 +90,7 @@ class SnapshotTest < Minitest::Test
 
   def test_snapshot_publish
     stub_request(:post, 'http://localhost/api/publish/kewl-repo-name')
-      .with(body: "{\"Distribution\":\"distro\",\"Architectures\":[\"source\"],\"Signing\":{\"Skip\":true},\"SourceKind\":\"local\",\"Sources\":[{\"Name\":\"kewl-snapshot-name\"}]}")
+      .with(body: "{\"Distribution\":\"distro\",\"Architectures\":[\"source\"],\"Signing\":{\"Skip\":true},\"SourceKind\":\"snapshot\",\"Sources\":[{\"Name\":\"kewl-snapshot-name\"}]}")
       .to_return(body: "{\"Architectures\":[\"source\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"local\",\"Sources\":[{\"Component\":\"main\",\"Name\":\"kitten\"}],\"Storage\":\"\"}\n")
 
     snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kewl-snapshot-name')

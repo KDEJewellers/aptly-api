@@ -70,7 +70,8 @@ class SnapshotTest < Minitest::Test
     stub_request(:get, 'http://localhost/api/snapshots/kitten')
       .to_return(body: '{"Name":"kitten","CreatedAt":"2015-02-27T21:36:08.337443295+03:00","Description":"Snapshot from mirror [wheezy-main]: http://mirror.yandex.ru/debian/ wheezy"}')
 
-    ::Aptly::Snapshot.get('kitten')
+    snapshot = ::Aptly::Snapshot.get('kitten')
+    assert_equal('kitten', snapshot.Name)
     assert_requested(:get, 'http://localhost/api/snapshots/kitten')
   end
 

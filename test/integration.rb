@@ -119,6 +119,36 @@ class RepositoryTest < Minitest::Test
     refute_equal([], repo.packages)
   end
 
+  def test_hhh_repo_snapshot
+    repo = ::Aptly::Repository.get('kitten')
+    snapshot = repo.snapshot(Name: 'kitten_snapshot')
+    refute_nil(snapshot)
+    refute_equal([], snapshot.packages)
+  end
+
+  def test_iii_snapshot
+    assert_raises ::Aptly::Errors::NotFoundError do
+      ::Aptly::Snapshot.get('trull')
+    end
+
+    snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'trull')
+    assert_raises ::Aptly::Errors::NotFoundError do
+      snapshot.delete
+    end
+
+    source = ::Aptly::Snapshot.get('kitten_snapshot')
+    snapshot = ::Aptly::Snapshot.create('mouse_snapshot',PackageRefs: source.packages, SourceSnapshot: 'kitten_snapshot')
+    refute_nil(snapshot)
+    refute_empty(snapshot.packages)
+    assert_equal(2, ::Aptly::Snapshot.list.size)
+
+    snapshot.update!(Name: 'pony_snapshot')
+    assert_equal('pony_snapshot', snapshot.Name)
+
+    diff = snapshot.diff(::Aptly::Snapshot.get('kitten_snapshot'))
+    assert(diff.empty?)
+  end
+
   def test_x
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'trull')
     assert_raises ::Aptly::Errors::NotFoundError do

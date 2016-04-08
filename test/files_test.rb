@@ -20,4 +20,13 @@ class FilesTest < Minitest::Test
     assert_equal file_list, files
     assert_requested(:post, 'http://localhost/api/files/yolo')
   end
+
+  def test_delete
+    stub_request(:delete, 'http://localhost/api/files/yolo')
+      .to_return(body: "{}\n")
+
+    ::Aptly::Files.delete('yolo')
+
+    assert_requested(:delete, 'http://localhost/api/files/yolo')
+  end
 end

@@ -17,6 +17,14 @@ module Aptly
                                    kwords)
         JSON.parse(response.body)
       end
+
+      # Delete files from remote's upload directory.
+      # @param path [String] path to delete (this may be a directory or a file)
+      # @return [nil]
+      def delete(path, connection = Connection.new, **kwords)
+        connection.send(:delete, "/files/#{path}", kwords)
+        nil
+      end
     end
   end
 end

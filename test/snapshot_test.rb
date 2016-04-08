@@ -83,10 +83,10 @@ class SnapshotTest < Minitest::Test
       .to_return(body: '["Pall matlab-support 0.0.18 c19e7719c5f39ba0","Pall dynare-matlab 4.3.0-2 e0672404f552bd85","Pall matlab-gdf 0.1.2-2 e5d967263b9047e7"]')
 
     snapshot = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
-    result = snapshot.search
+    result = snapshot.packages
     refute_empty(result)
 
-    result = snapshot.search(q: 'Name (~ matlab)')
+    result = snapshot.packages(q: 'Name (~ matlab)')
     refute_empty(result)
   end
 end

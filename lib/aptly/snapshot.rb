@@ -34,7 +34,7 @@ module Aptly
 
     # Search for a package in a snapshot
     # @return [Array] list of packages found
-    def search(**kwords)
+    def packages(**kwords)
       response = connection.send(:get, "/snapshots/#{self.Name}/packages",
                                  query: kwords,
                                  query_mangle: false)

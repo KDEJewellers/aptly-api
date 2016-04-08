@@ -41,6 +41,22 @@ class RepositoryTest < Minitest::Test
     assert 'kitten', repo.Name
   end
 
+  def test_ccd_repo_edit
+    repo = ::Aptly::Repository.get('kitten')
+
+    assert_equal('', repo.DefaultDistribution)
+    # Change
+    repo.edit!(DefaultDistribution: 'meow')
+    assert_equal('meow', repo.DefaultDistribution)
+    # Noop change => ret nil
+    ret = repo.edit!(DefaultDistribution: 'meow')
+    assert_equal(nil, ret)
+    # Change => ret self
+    ret = repo.edit!(DefaultDistribution: 'kitten')
+    assert_equal(repo, ret)
+    assert_equal('kitten', repo.DefaultDistribution)
+  end
+
   def test_ddd_repo_packages
     repo = ::Aptly::Repository.get('kitten')
     packages = repo.packages # No exceptions or nothing

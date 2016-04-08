@@ -259,4 +259,46 @@ class RepositoryTest < Minitest::Test
                      body: "{\"PackageRefs\":[\"Pall kitteh 999:999 66f130f348dc4864\"]}",
                      times: 3)
   end
+
+  def test_edit
+    # {:Name=>"kitten", :Comment=>"", :DefaultDistribution=>"meow", :DefaultComponent=>""}
+
+    stub_request(:get, 'http://localhost/api/repos/kitten')
+      .to_return(body: '{"Name":"kitten","Comment":"","DefaultDistribution":"","DefaultComponent":""}')
+
+    stub_request(:put, 'http://localhost/api/repos/kitten')
+      .with(body: '{"DefaultDistribution":"meow","Comment":"fancy comment"}')
+      .to_return(body: '{"Name":"kitten","Comment":"fancy comment","DefaultDistribution":"meow","DefaultComponent":""}')
+
+    stub_request(:put, 'http://localhost/api/repos/kitten')
+      .with(body: '{"Comment":"other comment"}')
+      .to_return(body: '{"Name":"kitten","Comment":"other comment","DefaultDistribution":"meow","DefaultComponent":""}')
+
+    repo = ::Aptly::Repository.get('kitten')
+    assert_equal('kitten', repo.Name)
+    assert_equal('', repo.Comment)
+    assert_equal('', repo.DefaultDistribution)
+    assert_equal('', repo.DefaultComponent)
+
+    ret = repo.edit!(DefaultDistribution: 'meow', Comment: 'fancy comment')
+    assert_equal(repo, ret) # ret == self (actual change)
+    assert_equal('kitten', repo.Name)
+    assert_equal('fancy comment', repo.Comment)
+    assert_equal('meow', repo.DefaultDistribution)
+    assert_equal('', repo.DefaultComponent)
+
+    ret = repo.edit!(DefaultDistribution: 'meow', Comment: 'fancy comment')
+    assert_equal(nil, ret) # ret == nil (no change)
+    assert_equal('kitten', repo.Name)
+    assert_equal('fancy comment', repo.Comment)
+    assert_equal('meow', repo.DefaultDistribution)
+    assert_equal('', repo.DefaultComponent)
+
+    ret = repo.edit!(Comment: 'other comment')
+    assert_equal(repo, ret) # ret == self (actual change)
+    assert_equal('kitten', repo.Name)
+    assert_equal('other comment', repo.Comment)
+    assert_equal('meow', repo.DefaultDistribution)
+    assert_equal('', repo.DefaultComponent)
+  end
 end

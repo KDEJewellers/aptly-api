@@ -100,6 +100,20 @@ module Aptly
       end
     end
 
+    # Edit this repository's attributes as per the parameters.
+    # @note this possibly mutates the attributes depending on the HTTP response
+    # @return [self] if the instance data was mutated
+    # @return [nil] if the instance data was not mutated
+    def edit!(**kwords)
+      response = connection.send(:put,
+                                 "/repos/#{self.Name}",
+                                 body: JSON.generate(kwords))
+      hash = JSON.parse(response.body, symbolize_names: true)
+      return nil if hash == marshal_dump
+      marshal_load(hash)
+      self
+    end
+
     class << self
       # Get a {Repository} instance if the repository already exists.
       # @param name [String] name of the repository

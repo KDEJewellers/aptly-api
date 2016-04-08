@@ -9,9 +9,9 @@ module Aptly
   # This class wraps HTTP interactions for our purposes and adds general purpose
   # automation on top of the raw HTTP actions.
   class Connection
-    DEFAULT_QUERY = {}
-    GETISH_ACTIONS = %i(get delete)
-    POSTISH_ACTIONS = %i(post put)
+    DEFAULT_QUERY = {}.freeze
+    GETISH_ACTIONS = %i(get delete).freeze
+    POSTISH_ACTIONS = %i(post put).freeze
     HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
 
     CODE_ERRORS = {
@@ -20,7 +20,7 @@ module Aptly
       404 => Errors::NotFoundError,
       409 => Errors::ConflictError,
       500 => Errors::ServerError
-    }
+    }.freeze
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
@@ -64,7 +64,7 @@ module Aptly
     def mangle_post(body, headers, kwords)
       if body
         headers ||= {}
-        headers.merge!('Content-Type' => 'application/json')
+        headers['Content-Type'] = 'application/json'
       else
         kwords.each do |k, v|
           if k.to_s.start_with?('file_')
@@ -104,10 +104,10 @@ module Aptly
       elsif GETISH_ACTIONS.include?(action)
         response = run_getish(action, path, kwords)
       else
-        fail "Unknown http action: #{action}"
+        raise "Unknown http action: #{action}"
       end
       error = CODE_ERRORS.fetch(response.status, nil)
-      fail error, response.body if error
+      raise error, response.body if error
       response
     end
   end

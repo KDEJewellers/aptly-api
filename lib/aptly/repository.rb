@@ -21,7 +21,7 @@ module Aptly
                                  query: kwords)
       hash = JSON.parse(response.body)
       error = Errors::RepositoryFileError.from_hash(hash)
-      fail error if error
+      raise error if error
       hash['Report']['Added']
     end
 
@@ -55,7 +55,7 @@ module Aptly
                       body: JSON.generate(PackageRefs: [*packages]))
       self
     end
-    alias_method :add_packages, :add_package
+    alias add_packages add_package
 
     # Deletes a package (by key) from the repository.
     # @param packages [Array<String>, String] a list of package keys or
@@ -67,7 +67,7 @@ module Aptly
                       body: JSON.generate(PackageRefs: [*packages]))
       self
     end
-    alias_method :delete_packages, :delete_package
+    alias delete_packages delete_package
 
     # Convenience wrapper around {Aptly.publish}, publishing this repository
     # locally and as only source of prefix.

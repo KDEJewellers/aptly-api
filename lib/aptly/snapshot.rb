@@ -23,6 +23,23 @@ module Aptly
                       query: kwords)
     end
 
+    # Find differences against another snapshot
+    # @param a {Snapshot} to diff against
+    # @return [Array<Hash>] diff between the two snashots
+    def diff(other_snapshot, connection = Connection.new)
+      endpoint = "/api/snapshots/#{self.Name}/diff/#{other_snapshot}"
+      response = connection.send(:get, endpoint)
+      JSON.parse(response.body)
+    end
+
+    # Search for a package in a snapshot
+    # @return [Array] list of packages found
+    def search(**kwords)
+      response = connection.send(:get, "/api/snapshots/#{self.Name}/packages",
+                                 query: kwords)
+      JSON.parse(response.body)
+    end
+
     class << self
       # List all known snapshots.
       # @param connection [Connection] connection to use for the instance
@@ -32,18 +49,7 @@ module Aptly
         JSON.parse(response.body).collect { |r| new(connection, r) }
       end
 
-      # Creates a new {Snapshot}
-      # @param repo [String] name of the local repo to snapshot
-      # @param connection [Connection] connection to use for the instance
-      # @return {Snapshot} newly created instance
-      def create_from_repo(repo, connection = Connection.new, **kwords)
-        kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
-        response = connection.send(:post, "/repos/#{repo}/snapshots",
-                                   body: JSON.generate(kwords))
-        new(connection, JSON.parse(response.body))
-      end
-
-      def create_from_refs(connection = Connection.new, **kwords)
+      def create(connection = Connection.new, **kwords)
         kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
         response = connection.send(:post, '/snapshots',
                                    body: JSON.generate(kwords))
@@ -53,20 +59,6 @@ module Aptly
       def get(name, connection = Connection.new)
         response = connection.send(:get, "/snapshots/#{name}")
         new(connection, JSON.parse(response.body))
-      end
-
-      alias show get
-
-      def search(package, connection = Connection.new, **kwords)
-        response = connection.send(:get, "/api/snapshots/#{package}/packages",
-                                   query: kwords)
-        JSON.parse(response.body)
-      end
-
-      def diff(snapshot, other_snapshot, connection = Connection.new)
-        endpoint = "/api/snapshots/#{snapshot}/diff/#{other_snapshot}"
-        response = connection.send(:get, endpoint)
-        JSON.parse(response.body)
       end
     end
   end

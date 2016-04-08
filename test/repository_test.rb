@@ -301,4 +301,14 @@ class RepositoryTest < Minitest::Test
     assert_equal('meow', repo.DefaultDistribution)
     assert_equal('', repo.DefaultComponent)
   end
+
+  def test_snapshot
+    stub_request(:post, 'http://localhost/api/repos/kitten/snapshots')
+      .with(body: '{"Name":"snap9"}')
+      .to_return(body: '{"Name":"snap9","CreatedAt":"2015-02-28T19:56:59.137192613+03:00","Description":"Snapshot from local repo [local-repo]: fun repo"}')
+
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+    snapshot = repo.snapshot(Name: 'snap9')
+    assert_equal snapshot.Name, 'snap9'
+  end
 end

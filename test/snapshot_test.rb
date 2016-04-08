@@ -34,12 +34,6 @@ class SnapshotTest < Minitest::Test
   end
 
   def test_snapshot_create
-    stub_request(:post, 'http://localhost/api/repos/kitten/snapshots')
-      .with(body: '{"Name":"snap9"}')
-      .to_return(body: '{"Name":"snap9","CreatedAt":"2015-02-28T19:56:59.137192613+03:00","Description":"Snapshot from local repo [local-repo]: fun repo"}')
-
-    ::Aptly::Snapshot.create_from_repo('kitten', Name: 'snap9')
-    # assert_equal snapshot.Name, 'snap9'
   end
 
   def test_snapshot_update
@@ -56,7 +50,7 @@ class SnapshotTest < Minitest::Test
     stub_request(:get, 'http://localhost/api/snapshots/kitten')
       .to_return(body: '{"Name":"kitten","CreatedAt":"2015-02-27T21:36:08.337443295+03:00","Description":"Snapshot from mirror [wheezy-main]: http://mirror.yandex.ru/debian/ wheezy"}')
 
-    ::Aptly::Snapshot.show('kitten')
+    ::Aptly::Snapshot.get('kitten')
     assert_requested(:get, 'http://localhost/api/snapshots/kitten')
   end
 end

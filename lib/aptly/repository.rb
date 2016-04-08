@@ -3,6 +3,7 @@ require 'tmpdir'
 
 require_relative 'errors'
 require_relative 'representation'
+require_relative 'snapshot'
 
 module Aptly
   # Aptly repository representation.
@@ -112,6 +113,15 @@ module Aptly
       return nil if hash == marshal_dump
       marshal_load(hash)
       self
+    end
+
+    # Creates a new {Snapshot}
+    # @return {Snapshot} newly created instance
+    def snapshot(**kwords)
+      kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      response = connection.send(:post, "/repos/#{self.Name}/snapshots",
+                                 body: JSON.generate(kwords))
+      Aptly::Snapshot.new(::Aptly::Connection.new, JSON.parse(response.body))
     end
 
     class << self

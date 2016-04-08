@@ -26,7 +26,7 @@ module Aptly
       response = connection.send(:put,
                                  "/publish/#{api_prefix}/#{self.Distribution}",
                                  body: JSON.generate(kwords))
-      hash = JSON.parse(response.body)
+      hash = JSON.parse(response.body, symbolize_names: true)
       return nil if hash == marshal_dump
       marshal_load(hash)
       self

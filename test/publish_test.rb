@@ -28,10 +28,15 @@ class PublishTest < Minitest::Test
   end
 
   def test_update!
+    ret_hash = @pub.marshal_dump.dup
+    # Change the Label to check if the pub is properly updated
+    ret_hash[:Label] = 'lab-eel'
     stub_request(:put, 'http://localhost/api/publish/prefix_kewl-repo-name/distro')
       .with(headers: { 'Content-Type' => 'application/json' })
-      .to_return(body: JSON.generate(@pub.marshal_dump))
+      .to_return(body: JSON.generate(ret_hash))
 
+    refute_equal('lab-eel', @pub.Label)
     @pub.update!
+    assert_equal('lab-eel', @pub.Label)
   end
 end

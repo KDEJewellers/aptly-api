@@ -25,11 +25,7 @@ module Aptly
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
 
-      uri = URI.parse('')
-      uri.scheme = 'http'
-      uri.host = ::Aptly.configuration.host
-      uri.port = ::Aptly.configuration.port
-
+      uri = ::Aptly.configuration.uri
       @connection = Faraday.new(url: uri.to_s) do |c|
         c.request :multipart
         c.request :url_encoded

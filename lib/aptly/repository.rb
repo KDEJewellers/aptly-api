@@ -116,9 +116,11 @@ module Aptly
     end
 
     # Creates a new {Snapshot}
+    # @param name [String] name of snapshot
     # @return {Snapshot} newly created instance
-    def snapshot(**kwords)
+    def snapshot(name, **kwords)
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
+      kwords[:Name] = name
       response = connection.send(:post, "/repos/#{self.Name}/snapshots",
                                  body: JSON.generate(kwords))
       Aptly::Snapshot.new(::Aptly::Connection.new, JSON.parse(response.body))

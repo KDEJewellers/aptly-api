@@ -308,7 +308,7 @@ class RepositoryTest < Minitest::Test
       .to_return(body: '{"Name":"snap9","CreatedAt":"2015-02-28T19:56:59.137192613+03:00","Description":"Snapshot from local repo [local-repo]: fun repo"}')
 
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
-    snapshot = repo.snapshot(Name: 'snap9')
+    snapshot = repo.snapshot('snap9')
     assert_equal snapshot.Name, 'snap9'
   end
 end

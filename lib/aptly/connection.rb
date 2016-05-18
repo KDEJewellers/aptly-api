@@ -26,7 +26,7 @@ module Aptly
       @query = kwords.fetch(:query, DEFAULT_QUERY)
 
       uri = ::Aptly.configuration.uri
-      @connection = Faraday.new(url: uri.to_s) do |c|
+      @connection = Faraday.new(uri.to_s) do |c|
         c.request :multipart
         c.request :url_encoded
         c.adapter :net_http

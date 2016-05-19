@@ -52,5 +52,8 @@ class ConnectionTest < Minitest::Test
     connection = ::Aptly::Connection.new
     @faraday_connection = connection.instance_variable_get(:@connection)
     assert_equal(@faraday_connection.options[:timeout], 10)
+
+    # Make sure connection options are reset to default at the end of the test
+    Faraday.default_connection_options = Faraday::ConnectionOptions.new
   end
 end

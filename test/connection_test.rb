@@ -46,4 +46,11 @@ class ConnectionTest < Minitest::Test
       connection.send(:http_call, :yoloaction, nil, nil)
     end
   end
+
+  def test_faraday_options_override
+    Faraday.default_connection_options = Faraday::ConnectionOptions.new(timeout: 10)
+    connection = ::Aptly::Connection.new
+    @faraday_connection = connection.instance_variable_get(:@connection)
+    assert_equal(@faraday_connection.options[:timeout], 10)
+  end
 end

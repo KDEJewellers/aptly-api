@@ -118,9 +118,14 @@ module Aptly
     # Creates a new {Snapshot}
     # @param name [String] name of snapshot
     # @return {Snapshot} newly created instance
-    def snapshot(name, **kwords)
-      kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
-      kwords[:Name] = name
+    def snapshot(name = nil, **kwords)
+      # TODO: 1.0
+      if name.nil? && !kwords.key?(:Name)
+        # backwards compatible handling allows name to be passed though
+        # kwords or the argument. Argument is preferred.
+        raise ArgumentError, 'wrong number of arguments (given 0, expected 1)'
+      end
+      kwords[:Name] = name unless name.nil?
       response = connection.send(:post, "/repos/#{self.Name}/snapshots",
                                  body: JSON.generate(kwords))
       Aptly::Snapshot.new(::Aptly::Connection.new, JSON.parse(response.body))

@@ -302,6 +302,19 @@ class RepositoryTest < Minitest::Test
     assert_equal('', repo.DefaultComponent)
   end
 
+  # 0.3 compat where snapshot had no explicit name argument, this will go away
+  # come 1.0
+  def test_snapshot_kwords_compat
+    stub_request(:post, 'http://localhost/api/repos/kitten/snapshots')
+      .with(body: '{"Name":"snap9"}')
+      .to_return(body: '{"Name":"snap9","CreatedAt":"2015-02-28T19:56:59.137192613+03:00","Description":"Snapshot from local repo [local-repo]: fun repo"}')
+
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+    snapshot = repo.snapshot(Name: 'snap9')
+    assert_equal snapshot.Name, 'snap9'
+  end
+
+  # new snapshot method takes name as argument.
   def test_snapshot
     stub_request(:post, 'http://localhost/api/repos/kitten/snapshots')
       .with(body: '{"Name":"snap9"}')
@@ -310,5 +323,9 @@ class RepositoryTest < Minitest::Test
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
     snapshot = repo.snapshot('snap9')
     assert_equal snapshot.Name, 'snap9'
+
+    assert_raises ArgumentError do
+      repo.snapshot
+    end
   end
 end

@@ -53,6 +53,7 @@ class ConnectionTest < Minitest::Test
     @faraday_connection = connection.instance_variable_get(:@connection)
     assert_equal(@faraday_connection.options[:timeout], 10)
 
+  ensure
     # Make sure connection options are reset to default at the end of the test
     Faraday.default_connection_options = Faraday::ConnectionOptions.new
   end

@@ -93,6 +93,7 @@ class RepositoryTest < Minitest::Test
     assert_equal 'wily', pub.Distribution
     assert_equal %w(amd64), pub.Architectures
     assert_equal 'kitten', pub.Sources[0].Name
+    assert pub.Sources[0].is_a? ::Aptly::Repository
 
     assert repo.published?
     refute repo.published_in.empty?
@@ -151,6 +152,7 @@ class RepositoryTest < Minitest::Test
     pub = snapshot.publish('pony', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
     refute_nil(pub)
     assert_equal('pony', pub.Prefix)
+    assert pub.Sources[0].is_a? ::Aptly::Snapshot
   end
 
   def test_x

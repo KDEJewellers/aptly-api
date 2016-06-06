@@ -8,7 +8,7 @@ module Aptly
   class PublishedRepository < Representation
     def initialize(*args)
       super(*args)
-      self.Sources.collect! { |s| Repository.new(connection, s) }
+      parse_sources
     end
 
     # Drops a published repository. This removes the published repository
@@ -50,6 +50,19 @@ module Aptly
     #   / => _
     def api_prefix
       self.Prefix.tr('_', '__').tr('/', '_')
+    end
+
+    def parse_sources
+      self.Sources.collect! do |s|
+        case self.SourceKind
+        when 'local'
+          Repository.new(connection, s)
+        when 'snapshot'
+          Snapshot.new(connection, s)
+        else
+          raise Aptly::Errors::UnknownSourceType
+        end
+      end
     end
   end
 end

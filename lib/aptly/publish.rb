@@ -1,6 +1,12 @@
 require_relative 'representation'
 
 module Aptly
+  module Errors
+    class UnknownSourceType < StandardError; end
+  end
+end
+
+module Aptly
   # A published repository representation.
   # Published repositories are not {Repository} instances as they are in fact
   # comprised of one or more different repositories.
@@ -8,7 +14,16 @@ module Aptly
   class PublishedRepository < Representation
     def initialize(*args)
       super(*args)
-      self.Sources.collect! { |s| Repository.new(connection, s) }
+      self.Sources.collect! do |s|
+        case self.SourceKind
+        when 'local'
+          Repository.new(connection, s)
+        when 'snapshot'
+          Snapshot.new(connection, s)
+        else
+          raise Aptly::Errors::UnknownSourceType
+        end
+      end
     end
 
     # Drops a published repository. This removes the published repository

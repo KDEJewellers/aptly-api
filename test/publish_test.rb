@@ -39,4 +39,36 @@ class PublishTest < Minitest::Test
     @pub.update!
     assert_equal('lab-eel', @pub.Label)
   end
+
+  def test_snapshot_kind
+    pub = ::Aptly::PublishedRepository.new(
+      ::Aptly::Connection.new,
+      'Architectures' => ['source'],
+      'Distribution' => 'distro',
+      'Label' => '',
+      'Origin' => '',
+      'Prefix' => 'prefix/kewl-repo-name',
+      'SourceKind' => 'snapshot',
+      'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
+      'Storage' => ''
+    )
+
+    assert(pub.Sources[0].is_a?(Aptly::Snapshot))
+  end
+
+  def test_unknown_kind
+    assert_raises Aptly::Errors::UnknownSourceType do
+      ::Aptly::PublishedRepository.new(
+        ::Aptly::Connection.new,
+        'Architectures' => ['source'],
+        'Distribution' => 'distro',
+        'Label' => '',
+        'Origin' => '',
+        'Prefix' => 'prefix/kewl-repo-name',
+        'SourceKind' => 'kitten',
+        'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
+        'Storage' => ''
+      )
+    end
+  end
 end

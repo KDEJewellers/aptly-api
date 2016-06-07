@@ -4,6 +4,7 @@ require 'tmpdir'
 require_relative 'errors'
 require_relative 'representation'
 require_relative 'snapshot'
+require_relative 'publishable'
 
 module Aptly
   # Aptly repository representation.

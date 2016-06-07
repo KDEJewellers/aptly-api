@@ -1,9 +1,12 @@
 require_relative 'representation'
+require_relative 'publishable'
 
 module Aptly
   # Aptly snapshots representation.
   # @see http://www.aptly.info/doc/api/snapshots/
   class Snapshot < Representation
+    include Publishable
+
     # Updates this snapshot
     # @return [self] if the instance data was mutated
     # @return [nil] if the instance data was not mutated
@@ -49,7 +52,6 @@ module Aptly
     def publish(prefix, **kwords)
       Aptly.publish([{ Name: self.Name }], prefix, 'snapshot', kwords)
     end
-
 
     class << self
       # List all known snapshots.

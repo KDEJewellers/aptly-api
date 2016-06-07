@@ -153,6 +153,7 @@ class RepositoryTest < Minitest::Test
     refute_nil(pub)
     assert_equal('pony', pub.Prefix)
     assert pub.Sources[0].is_a? ::Aptly::Snapshot
+    assert_equal([pub], snapshot.published_in)
   end
 
   def test_x

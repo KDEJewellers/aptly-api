@@ -56,6 +56,23 @@ class PublishTest < Minitest::Test
     assert(pub.Sources[0].is_a?(Aptly::Snapshot))
   end
 
+  def test_repository_kind
+    pub = ::Aptly::PublishedRepository.new(
+      ::Aptly::Connection.new,
+      'Architectures' => ['source'],
+      'Distribution' => 'distro',
+      'Label' => '',
+      'Origin' => '',
+      'Prefix' => 'prefix/kewl-repo-name',
+      'SourceKind' => 'local',
+      'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
+      'Storage' => ''
+    )
+
+    assert(pub.Sources[0].is_a?(Aptly::Repository))
+  end
+
+
   def test_unknown_kind
     assert_raises Aptly::Errors::UnknownSourceType do
       ::Aptly::PublishedRepository.new(

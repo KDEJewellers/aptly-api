@@ -19,6 +19,9 @@ module Aptly
     # Raised when a request returns code 500.
     class ServerError < HTTPError; end
 
+    # Raised when a Snapshot consists of a unknown source type
+    class UnknownSourceType < StandardError; end
+
     # Raised when a file operation had an error.
     class RepositoryFileError < StandardError
       # @!attribute [r] failures

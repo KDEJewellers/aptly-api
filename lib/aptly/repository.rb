@@ -4,11 +4,14 @@ require 'tmpdir'
 require_relative 'errors'
 require_relative 'representation'
 require_relative 'snapshot'
+require_relative 'publishable'
 
 module Aptly
   # Aptly repository representation.
   # @see http://www.aptly.info/doc/api/repos/
   class Repository < Representation
+    include Publishable
+
     # Delete this repository.
     def delete(**kwords)
       connection.send(:delete, "/repos/#{self.Name}", query: kwords)
@@ -76,29 +79,6 @@ module Aptly
     # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
       Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
-    end
-
-    # @return [Boolean]
-    def published?
-      !published_in.empty?
-    end
-
-    # Lists all PublishedRepositories self is published in. Namely self must
-    # be a source of the published repository in order for it to appear here.
-    # This method always returns an array of affected published repositories.
-    # If you use this method with a block it will additionally yield each
-    # published repository that would appear in the array, making it a shorthand
-    # for {Array#each}.
-    # @yieldparam pub [PublishedRepository]
-    # @return [Array<PublishedRepository>]
-    def published_in
-      Aptly::PublishedRepository.list(connection).select do |pub|
-        next false unless pub.Sources.any? do |src|
-          src.Name == self.Name
-        end
-        yield pub if block_given?
-        true
-      end
     end
 
     # Edit this repository's attributes as per the parameters.

@@ -151,6 +151,7 @@ class RepositoryTest < Minitest::Test
     pub = snapshot.publish('pony', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
     refute_nil(pub)
     assert_equal('pony', pub.Prefix)
+    assert_equal([pub], snapshot.published_in)
   end
 
   def test_x

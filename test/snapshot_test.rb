@@ -100,4 +100,19 @@ class SnapshotTest < Minitest::Test
     assert_equal 'kewl-repo-name', pub.Prefix
     assert_equal %w(source), pub.Architectures
   end
+
+  def test_published_in
+    stub_request(:get, 'http://localhost/api/publish')
+      .to_return(body: "[{\"Architectures\":[\"all\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"snapshot\",\"Sources\":[{\"Component\":\"main\",\"Name\":\"kitten\"}],\"Storage\":\"\"}]\n")
+    repo = ::Aptly::Snapshot.new(::Aptly::Connection.new, Name: 'kitten')
+
+    # returns array
+    pubs = repo.published_in
+    assert 1, pubs.size
+    yielded = false
+
+    # yields with block
+    repo.published_in.each { yielded = true }
+    assert yielded
+  end
 end

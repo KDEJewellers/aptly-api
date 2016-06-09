@@ -6,7 +6,7 @@ require 'aptly/version'
 Gem::Specification.new do |spec|
   spec.name          = 'aptly-api'
   spec.version       = Aptly::VERSION
-  spec.authors       = ['Harald Sitter']
+  spec.authors       = ['Harald Sitter', 'Rohan Garg']
   spec.email         = ['sitter@kde.org']
 
   spec.summary       = 'REST client for the Aptly API'

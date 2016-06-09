@@ -74,7 +74,7 @@ class PublishTest < Minitest::Test
 
 
   def test_unknown_kind
-    assert_raises Aptly::Errors::UnknownSourceType do
+    assert_raises Aptly::Errors::UnknownSourceTypeError do
       ::Aptly::PublishedRepository.new(
         ::Aptly::Connection.new,
         'Architectures' => ['source'],

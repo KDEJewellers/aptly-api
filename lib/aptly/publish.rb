@@ -60,7 +60,7 @@ module Aptly
         when 'snapshot'
           Snapshot.new(connection, s)
         else
-          raise Aptly::Errors::UnknownSourceType
+          raise Aptly::Errors::UnknownSourceTypeError
         end
       end
     end

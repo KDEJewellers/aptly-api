@@ -20,7 +20,7 @@ module Aptly
     class ServerError < HTTPError; end
 
     # Raised when a Snapshot consists of a unknown source type
-    class UnknownSourceType < StandardError; end
+    class UnknownSourceTypeError < StandardError; end
 
     # Raised when a file operation had an error.
     class RepositoryFileError < StandardError

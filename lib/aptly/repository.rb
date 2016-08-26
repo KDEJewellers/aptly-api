@@ -13,9 +13,13 @@ module Aptly
     include Publishable
 
     # Delete this repository.
-    def delete(**kwords)
+    # @return [nil] always returns nil
+    def delete!(**kwords)
       connection.send(:delete, "/repos/#{self.Name}", query: kwords)
+      nil
     end
+    # TODO: 1.0 drop delete, it's dangerous as it might as well delete packages
+    alias delete delete!
 
     # Add a previously uploaded file to the Repository.
     # @return [Hash] report data as specified in the API.

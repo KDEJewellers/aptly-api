@@ -14,7 +14,7 @@ module Aptly
     # Drops a published repository. This removes the published repository
     # but leaves its soures intact.
     def drop(**kwords)
-      connection.send(:delete, "/publish/#{api_prefix}/#{self.Distribution}",
+      connection.send(:delete, "/publish/#{self.Storage}:#{api_prefix}/#{self.Distribution}",
                       query: kwords)
     end
 
@@ -24,7 +24,7 @@ module Aptly
     # @return [nil] if the instance data was not mutated
     def update!(**kwords)
       response = connection.send(:put,
-                                 "/publish/#{api_prefix}/#{self.Distribution}",
+                                 "/publish/#{self.Storage}:#{api_prefix}/#{self.Distribution}",
                                  body: JSON.generate(kwords))
       hash = JSON.parse(response.body, symbolize_names: true)
       return nil if hash == marshal_dump

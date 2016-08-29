@@ -14,6 +14,19 @@ class PublishTest < Minitest::Test
       'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
       'Storage' => ''
     )
+
+    @pub_s3 = ::Aptly::PublishedRepository.new(
+      ::Aptly::Connection.new,
+      'Architectures' => ['source'],
+      'Distribution' => 'distro',
+      'Label' => '',
+      'Origin' => '',
+      'Prefix' => 'prefix/kewl-repo-name',
+      'SourceKind' => 'local',
+      'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
+      'Storage' => 's3:mybucket'
+    )
+
   end
 
   def teardown
@@ -21,7 +34,7 @@ class PublishTest < Minitest::Test
   end
 
   def test_drop
-    stub_request(:delete, 'http://localhost/api/publish/prefix_kewl-repo-name/distro')
+    stub_request(:delete, 'http://localhost/api/publish/:prefix_kewl-repo-name/distro')
       .to_return(body: '{}')
 
     @pub.drop
@@ -31,13 +44,25 @@ class PublishTest < Minitest::Test
     ret_hash = @pub.marshal_dump.dup
     # Change the Label to check if the pub is properly updated
     ret_hash[:Label] = 'lab-eel'
-    stub_request(:put, 'http://localhost/api/publish/prefix_kewl-repo-name/distro')
+    stub_request(:put, 'http://localhost/api/publish/:prefix_kewl-repo-name/distro')
       .with(headers: { 'Content-Type' => 'application/json' })
       .to_return(body: JSON.generate(ret_hash))
 
     refute_equal('lab-eel', @pub.Label)
     @pub.update!
     assert_equal('lab-eel', @pub.Label)
+  end
+
+  def test_s3_update!
+    ret_hash = @pub_s3.marshal_dump.dup
+    ret_hash[:Sources] = [{ 'Component' => 'main', 'Name' => 'puppies' }]
+    stub_request(:put, 'http://localhost/api/publish/s3:mybucket:prefix_kewl-repo-name/distro')
+      .with(headers: { 'Content-Type' => 'application/json' })
+      .to_return(body: JSON.generate(ret_hash))
+    refute_equal('puppies', @pub_s3.Sources[0].Name)
+    @pub_s3.Sources = [{ 'Component' => 'main', 'Name' => 'puppies' }]
+    @pub_s3.update!
+    assert_equal('puppies', @pub_s3.Sources[0][:Name])
   end
 
   def test_snapshot_kind

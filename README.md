@@ -40,6 +40,9 @@ end
 repo.publish('public-name', Distribution: 'wily', Architectures: %w(amd64 i386))
 ```
 
+## Documentation
+http://www.rubydoc.info/gems/aptly-api/Aptly/
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

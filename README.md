@@ -28,8 +28,7 @@ Or install it yourself as:
 require 'aptly'
 
 Aptly.configure do |config|
-  config.host = 'localhost'
-  config.port = 8080
+  config.uri = URI::HTTP.build(host: 'localhost', port: 8080)
 end
 
 repo = Aptly::Repository.create('kewl-new-repo')

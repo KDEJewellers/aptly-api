@@ -20,6 +20,7 @@ module Aptly
                                         port: 80,
                                         path: '/'),
                    host: nil, port: nil, path: nil)
+      @uri = nil
       @uri = uri unless host || port || path
       return if @uri
       @uri = fallback_uri(host, port, path)

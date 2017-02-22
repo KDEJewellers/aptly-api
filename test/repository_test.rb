@@ -288,7 +288,7 @@ class RepositoryTest < Minitest::Test
     assert_equal('', repo.DefaultComponent)
 
     ret = repo.edit!(DefaultDistribution: 'meow', Comment: 'fancy comment')
-    assert_equal(nil, ret) # ret == nil (no change)
+    assert_nil(ret) # ret == nil (no change)
     assert_equal('kitten', repo.Name)
     assert_equal('fancy comment', repo.Comment)
     assert_equal('meow', repo.DefaultDistribution)

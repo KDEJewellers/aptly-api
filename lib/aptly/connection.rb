@@ -30,7 +30,7 @@ module Aptly
       @connection = Faraday.new(uri) do |c|
         c.request :multipart
         c.request :url_encoded
-        c.adapter :net_http
+        c.adapter :excon, @adapter_options
       end
     end
 

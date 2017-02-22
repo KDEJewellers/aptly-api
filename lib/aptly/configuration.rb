@@ -6,6 +6,8 @@ module Aptly
     extend Gem::Deprecate
 
     # @!attribute uri
+    #   Generally any suitable URI is allowed. This can also be a Unix domain
+    #   socket which needs to be used in the notation unix:/tmp/sock.
     #   @return [URI] the base URI for the API (http://localhost by default)
     attr_accessor :uri
 

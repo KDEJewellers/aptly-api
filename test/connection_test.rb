@@ -63,4 +63,16 @@ class ConnectionTest < Minitest::Test
     stub_request(:get, 'http://otherhost/api').to_return(status: 200)
     c.get
   end
+
+  def test_unix
+    # webmock is a bit screwed up with sockets but is suitably enough
+    # for this test case anyway. Basically the actual request URI is meant to
+    # be unix:/api which in webmock ends up being 'http://unix/api', the
+    # actual socket is passed as param to Excon. We are not testing this but
+    # if the path in webmock is well-formed we'll simply assume our socket
+    # actually works :O
+    stub_request(:get, 'http://unix/api').to_return(status: 200)
+    c = ::Aptly::Connection.new(uri: URI.parse('unix:///tmp/sock'))
+    c.get
+  end
 end

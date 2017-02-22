@@ -47,8 +47,16 @@ module Aptly
     private
 
     def uri
+      @adapter_options ||= {}
       @uri ||= begin
         uri = @base_uri.clone
+        return uri unless uri.scheme == 'unix'
+        # For Unix domain sockets we need to divide the bits apart as Excon
+        # expects the path URI without a socket path and the socket path as
+        # option.
+        @adapter_options[:socket] = uri.path
+        uri.host = nil
+        uri
       end
     end
 

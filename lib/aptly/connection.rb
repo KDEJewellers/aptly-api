@@ -24,9 +24,10 @@ module Aptly
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)
+      @base_uri = kwords.delete(:uri) { ::Aptly.configuration.uri.clone }
 
-      uri = ::Aptly.configuration.uri
-      @connection = Faraday.new(uri.to_s) do |c|
+      raise if uri.nil?
+      @connection = Faraday.new(uri) do |c|
         c.request :multipart
         c.request :url_encoded
         c.adapter :net_http
@@ -44,6 +45,12 @@ module Aptly
     end
 
     private
+
+    def uri
+      @uri ||= begin
+        uri = @base_uri.clone
+      end
+    end
 
     def build_query(kwords)
       query = @query.merge(kwords.delete(:query) { {} })

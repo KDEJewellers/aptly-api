@@ -57,4 +57,10 @@ class ConnectionTest < Minitest::Test
     # Make sure connection options are reset to default at the end of the test
     Faraday.default_connection_options = Faraday::ConnectionOptions.new
   end
+
+  def test_uri_option
+    c = ::Aptly::Connection.new(uri: URI::HTTP.build(host: 'otherhost'))
+    stub_request(:get, 'http://otherhost/api').to_return(status: 200)
+    c.get
+  end
 end

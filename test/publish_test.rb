@@ -26,10 +26,17 @@ class PublishTest < Minitest::Test
       'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
       'Storage' => 's3:mybucket'
     )
+
   end
 
   def teardown
     WebMock.allow_net_connect!
+  end
+
+  def test_allocate
+    # https://bugs.ruby-lang.org/issues/13358
+    # Also see RepresentationTest::test_alocate
+    ::Aptly::PublishedRepository.allocate
   end
 
   def test_drop

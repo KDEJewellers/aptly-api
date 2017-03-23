@@ -8,7 +8,8 @@ module Aptly
   class PublishedRepository < Representation
     def initialize(*args)
       super(*args)
-      parse_sources
+      # special case for connection being allowed to be nil
+      parse_sources if @connection
     end
 
     # Drops a published repository. This removes the published repository

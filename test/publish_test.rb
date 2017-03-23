@@ -26,7 +26,6 @@ class PublishTest < Minitest::Test
       'Sources' => [{ 'Component' => 'main', 'Name' => 'kitten' }],
       'Storage' => 's3:mybucket'
     )
-
   end
 
   def teardown

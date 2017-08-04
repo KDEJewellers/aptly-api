@@ -50,7 +50,7 @@ module Aptly
     #   _ => __
     #   / => _
     def api_prefix
-      self.Prefix.tr('_', '__').tr('/', '_')
+      ::Aptly.escape_prefix(self.Prefix)
     end
 
     def parse_sources

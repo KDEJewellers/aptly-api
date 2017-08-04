@@ -22,4 +22,11 @@ class AptlyTest < Minitest::Test
     assert_equal 'localhost', ::Aptly.configuration.host
     assert_equal 1234, ::Aptly.configuration.port
   end
+
+  def test_publish_with_slashed_prefix
+    # catch code 500 we don't want to test publish construction here
+    assert_raises Aptly::Errors::InvalidPrefixError do
+      ::Aptly.publish([{ Name: 'thingy' }], 'dev/unstable')
+    end
+  end
 end

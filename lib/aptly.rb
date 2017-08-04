@@ -35,11 +35,14 @@ module Aptly
 
     # Publish 1 or more sources into a public repository prefix.
     # @param sources [Array<Repository>] array of repositories to source
-    # @param prefix [String] the prefix to publish under
+    # @param prefix [String] the prefix to publish under (must be escaped see
+    #    {#escape_prefix})
     # @param source_kind [String] the source kind (local or snapshot)
     # @return [PublishedRepository] newly published repository
     def publish(sources, prefix = '', source_kind = 'local',
                 connection = Connection.new, **kwords)
+      # TODO: 1.0 break compat and invert the assertion to want unescaped
+      raise Errors::InvalidPrefixError if prefix.include?('/')
       kwords = kwords.map { |k, v| [k.to_s.capitalize, v] }.to_h
       options = kwords.merge(
         SourceKind: source_kind,
@@ -48,6 +51,14 @@ module Aptly
       response = connection.send(:post, "/publish/#{prefix}",
                                  body: JSON.generate(options))
       PublishedRepository.new(connection, JSON.parse(response.body))
+    end
+
+    # Translates a pathish prefix (e.g. 'dev/unstable_x') to an API-safe prefix
+    # (e.g. 'dev_unstable__x')
+    # See prefix format description on https://www.aptly.info/doc/api/publish/
+    # @return [String] API-safe prefix notation
+    def escape_prefix(prefix_path)
+      prefix_path.tr('_', '__').tr('/', '_')
     end
   end
 end

@@ -67,5 +67,13 @@ module Aptly
         end
       end
     end
+
+    # Raised when a publishing prefix contains a slash when it was expected to
+    # be in API-safe format.
+    # Unfortunately we cannot automatically coerce as the safe format has
+    # character overlap with an unsafe format (_ means something in both), so
+    # we'll expect the API consumer to only hand us suitable prefixes.
+    # https://www.aptly.info/doc/api/publish/
+    class InvalidPrefixError < StandardError; end
   end
 end

@@ -62,7 +62,7 @@ class RepositoryTest < Minitest::Test
   def test_upload
     debfile = File.join(__dir__, 'data', 'kitteh.deb')
     stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
-      .with(headers: {'Content-Type'=>'multipart/form-data; boundary=-----------RubyMultipartPost'})
+      .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: '["Aptly__Repository/kitteh.deb"]')
       stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
       .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
@@ -81,7 +81,7 @@ class RepositoryTest < Minitest::Test
   def test_erroring_upload
     debfile = File.join(__dir__, 'data', 'kitteh.deb')
     stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
-      .with(headers: {'Content-Type'=>'multipart/form-data; boundary=-----------RubyMultipartPost'})
+      .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: '["Aptly__Repository/kitteh.deb"]')
     stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
       .to_return(body: "{\"FailedFiles\":[\"/home/nci/aptly/upload/brum/kitteh.deb\"],\"Report\":{\"Warnings\":[\"Unable to process /home/nci/aptly/upload/Aptly__Repository-smith-20151217-14879-7cq2c8/gpgmepp_15.08.2+git20151212.1109+15.04.orig.tar.xz: stat /home/nci/aptly/upload/Aptly__Repository-smith-20151217-14879-7cq2c8/gpgmepp_15.08.2+git20151212.1109+15.04.orig.tar.xz: no such file or directory\"],\"Added\":[],\"Removed\":[]}}\n")

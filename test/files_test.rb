@@ -12,7 +12,7 @@ class FilesTest < Minitest::Test
   def test_upload
     file_list = ["yolo/#{__FILE__}"]
     stub_request(:post, 'http://localhost/api/files/yolo')
-      .with(headers: {'Content-Type'=>'multipart/form-data; boundary=-----------RubyMultipartPost'})
+      .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: JSON.generate(file_list))
 
     files = ::Aptly::Files.upload([__FILE__], 'yolo')

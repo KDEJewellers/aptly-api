@@ -1,5 +1,7 @@
 # Change Log
 
+## Unreleased
+
 ## [0.7.0]
 ### Added
 - Aptly.escape_prefix is a new helper method to turn prefixes into

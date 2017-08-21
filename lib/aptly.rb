@@ -57,6 +57,7 @@ module Aptly
     # (e.g. 'dev_unstable__x')
     # See prefix format description on https://www.aptly.info/doc/api/publish/
     # @return [String] API-safe prefix notation
+    # @since 0.7.0
     def escape_prefix(prefix_path)
       prefix_path.tr('_', '__').tr('/', '_')
     end

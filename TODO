@@ -1,6 +1,0 @@
-- cookbook needs to install and run gpg to init keyring?
-- need signing support and testing
-  - signing happens at publishing stage
-
-low prio:
-- package listing api to port install_check.rb to

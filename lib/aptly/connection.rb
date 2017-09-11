@@ -10,8 +10,8 @@ module Aptly
   # automation on top of the raw HTTP actions.
   class Connection
     DEFAULT_QUERY = {}.freeze
-    GETISH_ACTIONS = %i(get delete).freeze
-    POSTISH_ACTIONS = %i(post put).freeze
+    GETISH_ACTIONS = %i[get delete].freeze
+    POSTISH_ACTIONS = %i[post put].freeze
     HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
 
     CODE_ERRORS = {

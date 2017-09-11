@@ -88,10 +88,10 @@ class RepositoryTest < Minitest::Test
     repo = ::Aptly::Repository.get('kitten')
 
     # p repo.publish('kewl-repo-name', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
-    pub = repo.publish('kf5', Distribution: 'wily', Architectures: %w(amd64), Signing: { Skip: true })
+    pub = repo.publish('kf5', Distribution: 'wily', Architectures: %w[amd64], Signing: { Skip: true })
     assert pub.is_a? ::Aptly::PublishedRepository
     assert_equal 'wily', pub.Distribution
-    assert_equal %w(amd64), pub.Architectures
+    assert_equal %w[amd64], pub.Architectures
     assert_equal 'kitten', pub.Sources[0].Name
     assert pub.Sources[0].is_a? ::Aptly::Repository
 
@@ -149,7 +149,7 @@ class RepositoryTest < Minitest::Test
     diff = snapshot.diff(source)
     assert(diff.empty?)
 
-    pub = snapshot.publish('pony', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
+    pub = snapshot.publish('pony', Distribution: 'distro', Architectures: %w[source], Signing: { Skip: true })
     refute_nil(pub)
     assert_equal('pony', pub.Prefix)
     assert pub.Sources[0].is_a? ::Aptly::Snapshot

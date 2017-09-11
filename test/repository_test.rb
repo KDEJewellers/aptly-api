@@ -104,11 +104,11 @@ class RepositoryTest < Minitest::Test
       .with(body: '{"Distribution":"distro","Architectures":["source"],"Signing":{"Skip":true},"SourceKind":"local","Sources":[{"Name":"kitten"}]}')
       .to_return(body: "{\"Architectures\":[\"source\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"local\",\"Sources\":[{\"Component\":\"main\",\"Name\":\"kitten\"}],\"Storage\":\"\"}\n")
     repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
-    pub = repo.publish('kewl-repo-name', Distribution: 'distro', Architectures: %w(source), Signing: { Skip: true })
+    pub = repo.publish('kewl-repo-name', Distribution: 'distro', Architectures: %w[source], Signing: { Skip: true })
     assert pub.is_a?(::Aptly::PublishedRepository)
     assert_equal 'distro', pub.Distribution
     assert_equal 'kewl-repo-name', pub.Prefix
-    assert_equal %w(source), pub.Architectures
+    assert_equal %w[source], pub.Architectures
     ##<HTTParty::Response:0x20094f0 parsed_response=[{"error"=>"unable to initialize GPG signer: looks like there are no keys in gpg, please create one (official manual: http://www.gnupg.org/gph/en/manual.html)", "meta"=>"Operation aborted"}], @response=#<Net::HTTPInternalServerError 500 Internal Server Error readbody=true>, @headers={"content-type"=>["application/json; charset=utf-8"], "date"=>["Mon, 14 Dec 2015 11:37:16 GMT"], "content-length"=>["188"]}>
     ##<HTTParty::Response:0x26585b8 parsed_response=[{"error"=>"unable to publish: unable to guess distribution name, please specify explicitly", "meta"=>"Operation aborted"}], @response=#<Net::HTTPInternalServerError 500 Internal Server Error readbody=true>, @headers={"content-type"=>["application/json; charset=utf-8"], "date"=>["Mon, 14 Dec 2015 11:39:00 GMT"], "content-length"=>["121"]}>
     ##<HTTParty::Response:0x1c98848 parsed_response=[{"error"=>"unable to publish: unable to figure out list of architectures, please supply explicit list", "meta"=>"Operation aborted"}], @response=#<Net::HTTPInternalServerError 500 Internal Server Error readbody=true>, @headers={"content-type"=>["application/json; charset=utf-8"], "date"=>["Mon, 14 Dec 2015 11:41:33 GMT"], "content-length"=>["132"]}>
@@ -187,7 +187,7 @@ class RepositoryTest < Minitest::Test
     # yields with block
     yielded = []
     repo.published_in { |x| yielded << x.Prefix }
-    assert_equal(%w(kewl-repo-name two-source-repo-name), yielded.sort)
+    assert_equal(%w[kewl-repo-name two-source-repo-name], yielded.sort)
   end
 
   def test_packages

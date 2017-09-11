@@ -39,7 +39,7 @@ module Aptly
     #   @return [String] path to use (defaults to /)
 
     # Fake deprecated attributes and redirect them to @uri
-    [:host, :port, :path].each do |uri_attr|
+    %i[host port path].each do |uri_attr|
       define_method(uri_attr.to_s) do
         @uri.send(uri_attr)
       end

@@ -9,12 +9,8 @@ module Aptly
       # @param connection [Connection] connection to use
       # @return [Array<String>] list of files now on the remote
       def upload(files, directory, connection = Connection.new, **kwords)
-        i = 0
-        files.each do |f|
-          kwords["file_#{i += 1}".to_sym] = f
-        end
-        response = connection.send(:post, "/files/#{directory}",
-                                   kwords)
+        files.each_with_index { |f, i| kwords["file_#{i}".to_sym] = f }
+        response = connection.send(:post, "/files/#{directory}", kwords)
         JSON.parse(response.body)
       end
 

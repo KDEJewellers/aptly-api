@@ -44,7 +44,7 @@ module Aptly
 
       # @return [String] (formatted) string representation
       def to_s
-        <<-EOF
+        <<-DESCRIPTION
 
 ~~~
   Failed to process:
@@ -52,7 +52,7 @@ module Aptly
   Warnings:
     #{warnings.join("\n    ")}
 ~~~
-        EOF
+        DESCRIPTION
       end
 
       class << self

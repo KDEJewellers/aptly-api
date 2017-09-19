@@ -10,9 +10,13 @@ module Aptly
   # automation on top of the raw HTTP actions.
   class Connection
     DEFAULT_QUERY = {}.freeze
+    private_constant :DEFAULT_QUERY
     GETISH_ACTIONS = %i[get delete].freeze
+    private_constant :GETISH_ACTIONS
     POSTISH_ACTIONS = %i[post put].freeze
+    private_constant :POSTISH_ACTIONS
     HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
+    private_constant :HTTP_ACTIONS
 
     CODE_ERRORS = {
       400 => Errors::ClientError,
@@ -21,6 +25,7 @@ module Aptly
       409 => Errors::ConflictError,
       500 => Errors::ServerError
     }.freeze
+    private_constant :CODE_ERRORS
 
     def initialize(**kwords)
       @query = kwords.fetch(:query, DEFAULT_QUERY)

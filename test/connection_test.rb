@@ -1,3 +1,18 @@
+# Copyright (C) 2015-2017 Harald Sitter <sitter@kde.org>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
 require_relative 'test_helper'
 
 class ConnectionTest < Minitest::Test
@@ -48,11 +63,12 @@ class ConnectionTest < Minitest::Test
   end
 
   def test_faraday_options_override
-    Faraday.default_connection_options = Faraday::ConnectionOptions.new(timeout: 10)
-    connection = ::Aptly::Connection.new
+    Faraday.default_connection_options =
+      Faraday::ConnectionOptions.new(timeout: 500_000_000)
+    # Our config also has the timeout stored, so use a fresh config.
+    connection = ::Aptly::Connection.new(config: Aptly::Configuration.new)
     @faraday_connection = connection.instance_variable_get(:@connection)
-    assert_equal(@faraday_connection.options[:timeout], 10)
-
+    assert_equal(500_000_000, @faraday_connection.options[:timeout])
   ensure
     # Make sure connection options are reset to default at the end of the test
     Faraday.default_connection_options = Faraday::ConnectionOptions.new

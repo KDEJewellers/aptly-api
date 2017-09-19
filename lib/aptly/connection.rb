@@ -1,7 +1,23 @@
+# Copyright (C) 2015-2017 Harald Sitter <sitter@kde.org>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
 require 'faraday'
 require 'json'
 require 'uri'
 
+require_relative 'configuration'
 require_relative 'errors'
 
 module Aptly
@@ -16,7 +32,8 @@ module Aptly
     POSTISH_ACTIONS = %i[post put].freeze
     private_constant :POSTISH_ACTIONS
     HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
-    private_constant :HTTP_ACTIONS
+    WRITE_ACTIONS = (POSTISH_ACTIONS + %i[delete]).freeze
+    private_constant :WRITE_ACTIONS
 
     CODE_ERRORS = {
       400 => Errors::ClientError,
@@ -27,12 +44,19 @@ module Aptly
     }.freeze
     private_constant :CODE_ERRORS
 
-    def initialize(**kwords)
-      @query = kwords.fetch(:query, DEFAULT_QUERY)
-      @base_uri = kwords.delete(:uri) { ::Aptly.configuration.uri.clone }
-
-      raise if uri.nil?
-      @connection = Faraday.new(uri) do |c|
+    # New connection.
+    # @param config [Configuration] Configuration instance to use
+    # @param query [Hash] Default HTTP query paramaters, these get the
+    #   specific query parameters merged upon.
+    # @param uri [URI] Base URI for the remote (default from
+    #   {Configuration#uri}).
+    def initialize(config: ::Aptly.configuration, query: DEFAULT_QUERY,
+                   uri: config.uri)
+      @query = query
+      @base_uri = uri
+      raise if faraday_uri.nil?
+      @config = config
+      @connection = Faraday.new(faraday_uri) do |c|
         c.request :multipart
         c.request :url_encoded
         c.adapter :excon, @adapter_options
@@ -53,9 +77,9 @@ module Aptly
 
     private
 
-    def uri
+    def faraday_uri
       @adapter_options ||= {}
-      @uri ||= begin
+      @faraday_uri ||= begin
         uri = @base_uri.clone
         return uri unless uri.scheme == 'unix'
         # For Unix domain sockets we need to divide the bits apart as Excon
@@ -94,13 +118,21 @@ module Aptly
       [body, headers]
     end
 
+    def setup_request(action, request)
+      standard_timeout = @config.timeout
+      standard_timeout = @config.write_timeout if WRITE_ACTIONS.include?(action)
+      request.options.timeout = standard_timeout
+    end
+
     def run_postish(action, path, kwords)
       body = kwords.delete(:body)
       headers = kwords.delete(:headers)
 
       body, headers = mangle_post(body, headers, kwords)
 
-      @connection.send(action, path, body, headers)
+      @connection.send(action, path, body, headers) do |request|
+        setup_request(action, request)
+      end
     end
 
     def run_getish(action, path, kwords)
@@ -109,11 +141,18 @@ module Aptly
       headers = kwords.delete(:headers)
 
       @connection.send(action, path, params, headers) do |request|
+        setup_request(action, request)
         if body
           request.headers[:content_type] = 'application/json'
           request.body = body
         end
       end
+    end
+
+    def handle_error(response)
+      error = CODE_ERRORS.fetch(response.status, nil)
+      raise error, response.body if error
+      response
     end
 
     def http_call(action, path, kwords)
@@ -124,9 +163,9 @@ module Aptly
       else
         raise "Unknown http action: #{action}"
       end
-      error = CODE_ERRORS.fetch(response.status, nil)
-      raise error, response.body if error
-      response
+      handle_error(response)
+    rescue Faraday::TimeoutError => e
+      raise Errors::TimeoutError, e.message
     end
   end
 end

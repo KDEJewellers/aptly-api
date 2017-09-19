@@ -1,6 +1,41 @@
 # Change Log
 
 ## Unreleased
+### Added
+- Configuration now has two new attributes timeout and write_timeout.
+  When you set a timeout manually on the Aptly configuration object it gets
+  used even if you have global timeouts set elsewhere.
+  As a side effect setting timeouts on faraday directly will not work anymore.
+  If you used to set a faraday-wide timeout we will try to use it,
+  iff longer than our default value. So, the effective default is at least
+  15 minutes but may be longer depending on the Faraday timeout.
+  This Faraday fallback is getting removed in 1.0, so you should port
+  to the new attributes instead. For future reference you should avoid
+  talking to Faraday directly.
+  - `timeout` controls the general HTTP connection timeouts. It's set to
+    1 minute by default which should be enough for most read operations.
+  - `write_timeout` controls the HTTP connection timeout of writing timeouts.
+    This applies in broad terms to all requests which we expect to require a
+    server-side lock to run and thus have high potential for timing out.
+    It defaults to 10 minutes which should allow most operations to finish.
+    The attribute will have tighter functionality if or when
+    https://github.com/smira/aptly/pull/459 gets merged and we can adopt a more
+    async API.
+- Connection.new now takes a new `config` parameter that is the Configuration
+  instance to use for the Connection. This partially deprecates the `uri`
+  parameter which you can set through the Configuration instance now.
+
+  ```
+  Aptly::Connection.new(uri: uri)
+  # can become
+  Aptly::Connection.new(Aptly::Configuration.new(uri: uri))
+  ```
+
+### Changed
+- Connection.new no longer catches arbitrary options but instead specifies
+  the accepted arguments in the method signature. It accepted two
+  well-known options before anyway, this enforces them properly on a language
+  level.
 
 ## [0.7.0]
 ### Added

@@ -26,6 +26,10 @@ module Aptly
     # Raised when a Snapshot consists of a unknown source type
     class UnknownSourceTypeError < StandardError; end
 
+    # Raised when a request times out waiting for the server to reply
+    # (this is the opposite of HTTP 408 where a server times out waiting for us)
+    class TimeoutError < StandardError; end
+
     # Raised when a file operation had an error.
     class RepositoryFileError < StandardError
       # @!attribute [r] failures

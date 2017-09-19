@@ -1,13 +1,26 @@
+# Copyright (C) 2015-2017 Harald Sitter <sitter@kde.org>
+# Copyright (C) 2016 Rohan Garg <rohan@garg.io>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
 require_relative 'test_helper'
+
+require 'webrick'
 
 class RepositoryTest < Minitest::Test
   def setup
     WebMock.disable_net_connect!
-    # WebMock.allow_net_connect!
-    # ::Aptly.configure do |config|
-    #   config.host = 'localhost'
-    #   config.port = 9090
-    # end
   end
 
   def teardown
@@ -76,6 +89,76 @@ class RepositoryTest < Minitest::Test
     assert report.is_a?(Array)
     assert_equal 1, report.size
     assert_equal 'gpgmepp_15.08.2+git20151212.1109+15.04-0_source added', report[0]
+  end
+
+  def test_upload_timeout
+    # This test is ab it far reaching, but we want a fairly high level view for
+    # timeouts, to make sure this works for the primary upload method, which is
+    # itself fairly high level.
+
+    # We'll run POSTs into a custom webrick server, run on a random port of
+    # localhost. Startup of the webrick is synced through a ConditionVariable.
+    @start_mutex = Mutex.new
+    @start_condition = ConditionVariable.new
+    @server = nil
+    @start_mutex.lock
+    @thread = Thread.start do
+      Thread.current.abort_on_exception = true
+      # Disable logging
+      logger = WEBrick::Log.new(nil, WEBrick::Log::FATAL)
+      # Broadcast our conditionvariable upon startup.
+      start_callback = proc do
+        @start_mutex.synchronize { @start_condition.broadcast }
+      end
+      @server = WEBrick::HTTPServer.new(BindAddress: 'localhost', Port: 0,
+                                        Logger: logger,
+                                        AccessLog: [], # disables access logging
+                                        StartCallback: start_callback)
+      @server.start
+    end
+    @start_condition.wait(@start_mutex)
+
+    # We'll allow localhost connections so we can talk to our webrick.
+    WebMock.disable_net_connect!(allow_localhost: true)
+    host_uri = URI("http://localhost:#{@server[:Port]}")
+
+    # Stub some calls we don't care about, these are implicitly called as part
+    # of the high level upload methods.
+    stub_request(:post, Regexp.new("#{host_uri}/api/repos/kitten/file/Aptly__Repository-(.*)"))
+      .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
+    stub_request(:delete, Regexp.new("#{host_uri}/api/files/.+"))
+      .to_return(body: "{}\n")
+
+    # The live handler has a 2 second delay built-in (which may be interrupted
+    # by a broadcast on shutdown).
+    @sleep_mutex = Mutex.new
+    @sleep_condition = ConditionVariable.new
+    @server.mount_proc '/' do |_, response|
+      @sleep_mutex.synchronize do
+        @sleep_condition.wait(@sleep_mutex, @sleep_time)
+      end
+      response.body = '{}' # dud response, so JSON.parse succeeds
+    end
+
+    # Standard timeout will be short, our request will time out by default!
+    config = Aptly::Configuration.new(uri: host_uri, write_timeout: 2)
+    repo = ::Aptly::Repository.new(Aptly::Connection.new(config: config),
+                                   Name: 'kitten')
+
+    debfile = File.join(__dir__, 'data', 'kitteh.deb')
+
+    # Times out with our timeout
+    @sleep_time = 4
+    assert_raises Aptly::Errors::TimeoutError do
+      repo.upload([debfile])
+    end
+  ensure
+    WebMock.disable_net_connect!(allow_localhost: false)
+    @server.stop if @server
+    @thread.kill if @thread # murder the server
+    # Wake up all sleeping requests
+    @sleep_mutex.synchronize { @sleep_condition.broadcast } if @sleep_mutex
+    @thread.join(8)
   end
 
   def test_erroring_upload

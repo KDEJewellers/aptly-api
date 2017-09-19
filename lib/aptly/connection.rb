@@ -41,7 +41,9 @@ module Aptly
 
     HTTP_ACTIONS.each do |action|
       # private api
-      define_method(action) do |relative_path = '', **kwords|
+      define_method(action) do |relative_path = '', kwords = {}|
+        # NB: double splat is broken with Ruby 2.2.1's define_method, so we
+        #   cannot splat kwords in the signature.
         kwords[:query] = build_query(kwords)
         kwords.delete(:query) if kwords[:query].empty?
 

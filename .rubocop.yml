@@ -1,3 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.1
 
+# We are not going to require gems just so we can indent heredocs...
+Layout/IndentHeredoc:
+  Enabled: false

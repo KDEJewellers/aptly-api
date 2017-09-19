@@ -64,7 +64,7 @@ class RepositoryTest < Minitest::Test
     stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
       .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: '["Aptly__Repository/kitteh.deb"]')
-      stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
+    stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
       .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
     stub_request(:delete, %r{http://localhost/api/files/.+})
       .to_return(body: "{}\n")

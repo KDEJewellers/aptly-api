@@ -39,14 +39,14 @@ module Aptly
       end
     end
 
-    def method_missing(symbol, *args, **kwords)
-      return super(symbol, *args, kwords) unless HTTP_ACTIONS.include?(symbol)
+    HTTP_ACTIONS.each do |action|
+      # private api
+      define_method(action) do |relative_path = '', **kwords|
+        kwords[:query] = build_query(kwords)
+        kwords.delete(:query) if kwords[:query].empty?
 
-      kwords[:query] = build_query(kwords)
-      kwords.delete(:query) if kwords[:query].empty?
-
-      relative_path = args.shift
-      http_call(symbol, add_api(relative_path), kwords)
+        http_call(action, add_api(relative_path), kwords)
+      end
     end
 
     private

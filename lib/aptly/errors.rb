@@ -1,4 +1,8 @@
 module Aptly
+  # TODO: 1.0 flatten this out. Either the classes should not have a suffix
+  #   or they should not be in an errors module. They were originally put in
+  #   here so its easy to view all errors in api documentation.
+
   # All aptly errors.
   module Errors
     # Generic HTTP error base.

@@ -110,7 +110,7 @@ class RepositoryTest < Minitest::Test
       start_callback = proc do
         @start_mutex.synchronize { @start_condition.broadcast }
       end
-      @server = WEBrick::HTTPServer.new(BindAddress: 'localhost', Port: 0,
+      @server = WEBrick::HTTPServer.new(BindAddress: '127.0.0.1', Port: 0,
                                         Logger: logger,
                                         AccessLog: [], # disables access logging
                                         StartCallback: start_callback)

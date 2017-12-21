@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rake-notes', '~> 0.2'
   spec.add_development_dependency 'simplecov', '~> 0.11'
-  spec.add_development_dependency 'webmock', '~> 2.1'
+  spec.add_development_dependency 'webmock', '~> 3.1'
   spec.add_development_dependency 'yard', '~> 0.8'
 
   spec.add_dependency 'faraday', '~> 0.9'

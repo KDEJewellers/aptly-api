@@ -1,6 +1,9 @@
 # Change Log
 
 ## Unreleased
+### Changed
+- Ruby 2.5.0 compatible. Temporary name construction of uploaded files now
+  happens using a custom helper instead of relying on tmpdir internals.
 ### Added
 - Configuration now has two new attributes timeout and write_timeout.
   When you set a timeout manually on the Aptly configuration object it gets

@@ -1,10 +1,26 @@
+# Copyright (C) 2015-2018 Harald Sitter <sitter@kde.org>
+# Copyright (C) 2016 Rohan Garg <rohan@garg.io>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
 require 'socket'
-require 'tmpdir'
 
 require_relative 'errors'
 require_relative 'representation'
 require_relative 'snapshot'
 require_relative 'publishable'
+require_relative 'tmpname'
 
 module Aptly
   # Aptly repository representation.
@@ -37,7 +53,7 @@ module Aptly
     # Convenience wrapper around {Files.upload}, {#add_file} and {Files.delete}
     def upload(files)
       prefix = "#{self.class.to_s.tr(':', '_')}-#{Socket.gethostname}-"
-      directory = Dir::Tmpname.make_tmpname(prefix, nil)
+      directory = TmpName.make(prefix)
       Files.upload(files, directory, connection)
       add_file(directory)
     ensure

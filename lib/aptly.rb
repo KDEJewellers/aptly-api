@@ -21,6 +21,7 @@ require 'aptly/publish'
 require 'aptly/repository'
 require 'aptly/version'
 require 'aptly/snapshot'
+require 'aptly/tmpname'
 
 # Aptly API
 module Aptly

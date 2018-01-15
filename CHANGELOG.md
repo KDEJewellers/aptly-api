@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [0.8.1]
 ### Changed
 - Ruby 2.5.0 compatible. Temporary name construction of uploaded files now
   happens using a custom helper instead of relying on tmpdir internals.

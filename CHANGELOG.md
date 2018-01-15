@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.8.2]
+### Fixed
+- Temporary files no longer contain characters that trip up the daemon.
+
 ## [0.8.1]
 ### Changed
 - Ruby 2.5.0 compatible. Temporary name construction of uploaded files now

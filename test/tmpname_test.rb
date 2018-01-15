@@ -18,17 +18,19 @@ require_relative 'test_helper'
 module Aptly
   # NB: this is in the module so it can access TmpName which is private.
   class TmpNameTest < Minitest::Test
-    def test_make
+    def test_dir
       foobar = 'foobar'
       foobar_size = 6 # performance, don't dynamically compute
-      tmpname = TmpName.make(foobar)
+      tmpname = TmpName.dir(foobar)
       assert_includes(tmpname, foobar)
+      # dirs should not contain dots to not confuse the server
+      refute_includes(tmpname, '.')
       # The 2 is entirely arbitrary but should be true in all cases as the
       # tmpname includes a YYYYMMDD timestamp.
       assert(tmpname.size > foobar_size * 2, "tmpname '#{tmpname}' too short")
       # Make sure it's actually random.
       256.times do
-        refute_equal(tmpname, TmpName.make(foobar))
+        refute_equal(tmpname, TmpName.dir(foobar))
       end
     end
   end

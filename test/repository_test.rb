@@ -74,10 +74,13 @@ class RepositoryTest < Minitest::Test
 
   def test_upload
     debfile = File.join(__dir__, 'data', 'kitteh.deb')
-    stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-(.*)})
+
+    # NB: the dir name must not include dots or the server won't be able to
+    #   handle it
+    stub_request(:post, %r{http://localhost/api/files/Aptly__Repository-([^\.]+)})
       .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: '["Aptly__Repository/kitteh.deb"]')
-    stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-(.*)})
+    stub_request(:post, %r{http://localhost/api/repos/kitten/file/Aptly__Repository-([^\.]*)})
       .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
     stub_request(:delete, %r{http://localhost/api/files/.+})
       .to_return(body: "{}\n")
@@ -411,4 +414,6 @@ class RepositoryTest < Minitest::Test
       repo.snapshot
     end
   end
+
+
 end

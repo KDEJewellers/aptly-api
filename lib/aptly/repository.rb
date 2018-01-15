@@ -53,7 +53,7 @@ module Aptly
     # Convenience wrapper around {Files.upload}, {#add_file} and {Files.delete}
     def upload(files)
       prefix = "#{self.class.to_s.tr(':', '_')}-#{Socket.gethostname}-"
-      directory = TmpName.make(prefix)
+      directory = TmpName.dir(prefix)
       Files.upload(files, directory, connection)
       add_file(directory)
     ensure

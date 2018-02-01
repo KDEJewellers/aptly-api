@@ -1,5 +1,17 @@
 # Change Log
 
+## Unreleased
+### Added
+- `Files.tmp_upload` is a new convenience wrapper around `#upload` and
+  `#delete`. It picks a temporary directory name and uploads the list of files
+  to that directory, it then yields the directory name so you can use it as file
+  identifier for the files. When the method returns it automatically cleans the
+  remote up via `#delete`.
+
+### Changed
+- `Repository.upload` is now based on `Files.tmp_upload`. Functionally
+  all remains the same; the temporary directory name on the remote changes.
+
 ## [0.8.2]
 ### Fixed
 - Temporary files no longer contain characters that trip up the daemon.

@@ -52,12 +52,9 @@ module Aptly
     # FIXME: needs to support single files
     # Convenience wrapper around {Files.upload}, {#add_file} and {Files.delete}
     def upload(files)
-      prefix = "#{self.class.to_s.tr(':', '_')}-#{Socket.gethostname}-"
-      directory = TmpName.dir(prefix)
-      Files.upload(files, directory, connection)
-      add_file(directory)
-    ensure
-      Files.delete(directory, connection)
+      Files.tmp_upload(files, connection) do |dir|
+        add_file(dir)
+      end
     end
 
     # List all packages in the repository

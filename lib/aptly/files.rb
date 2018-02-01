@@ -1,3 +1,18 @@
+# Copyright (C) 2015-2018 Harald Sitter <sitter@kde.org>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
 module Aptly
   # Aptly files management.
   # @see http://www.aptly.info/doc/api/files/
@@ -14,12 +29,51 @@ module Aptly
         JSON.parse(response.body)
       end
 
+      # Upload files into a temporary directory on remote.
+      # This method expects a block which will be yielded to with the directory
+      # name on the remote. The directory will be deleted when this method
+      # returns.
+      # You'll generally want to use this instead of #upload so you don't have
+      # to worry about name collission and clean up.
+      #
+      # @param files [Array<String>] paths to files to upload
+      # @param connection [Connection] connection to use
+      # @yield [String] the remote directory name the files were uploaded to
+      # @return return value of block
+      #
+      # @example Can be used to push into multiple repositories with one upload
+      #   Files.tmp_upload(files) { |d| repos.each { |r| r.add_files(d) } }
+      #
+      # @since 0.9.0
+      def tmp_upload(files, connection = Connection.new, **kwords)
+        # TODO: 1.0 find out if #upload even has a use case and maybe replace it
+        dir = tmp_dir_name
+        upload(files, dir, connection, **kwords)
+        uploaded = true
+        yield dir
+      ensure
+        # We have an uploaded var here as exceptions raised by upload would
+        # still run this, but they may not have the remote file, so our
+        # delete request would again cause an error making it harder to spot
+        # the orignal problem.
+        delete(dir) if uploaded
+      end
+
       # Delete files from remote's upload directory.
       # @param path [String] path to delete (this may be a directory or a file)
       # @return [nil]
       def delete(path, connection = Connection.new, **kwords)
         connection.send(:delete, "/files/#{path}", kwords)
         nil
+      end
+
+      private
+
+      def tmp_dir_name
+        # TODO: make this include $PID to reduce chance of conflict
+        # TODO: include Thread.current.object_id
+        prefix = "#{to_s.tr(':', '_')}-#{Socket.gethostname}"
+        TmpName.dir(prefix)
       end
     end
   end

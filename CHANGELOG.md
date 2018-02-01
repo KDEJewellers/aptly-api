@@ -11,6 +11,8 @@
 ### Changed
 - `Repository.upload` is now based on `Files.tmp_upload`. Functionally
   all remains the same; the temporary directory name on the remote changes.
+- Temporary directory names now include a thread id to reduce the risk of
+  conflicts across different threads.
 
 ## [0.8.2]
 ### Fixed

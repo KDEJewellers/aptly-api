@@ -20,12 +20,13 @@ module Aptly
   module TmpName
     # @return [String] temporary directory name (only safe characters)
     def self.dir(prefix)
-      format('%<prefix>s-%<time>s-%<pid>s-%<rand>s',
+      format('%<prefix>s-%<time>s-%<pid>s-%<tid>s-%<rand>s',
              prefix: prefix,
              # rubocop:disable Style/FormatStringToken
              time: Time.now.strftime('%Y%m%d'),
              # rubocop:enable Style/FormatStringToken
              pid: $PROCESS_ID,
+             tid: Thread.current.object_id,
              rand: rand(0x100000000).to_s(36))
     end
   end

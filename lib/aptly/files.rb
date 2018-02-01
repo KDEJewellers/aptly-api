@@ -70,8 +70,6 @@ module Aptly
       private
 
       def tmp_dir_name
-        # TODO: make this include $PID to reduce chance of conflict
-        # TODO: include Thread.current.object_id
         prefix = "#{to_s.tr(':', '_')}-#{Socket.gethostname}"
         TmpName.dir(prefix)
       end

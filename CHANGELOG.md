@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [0.9.0]
 ### Added
 - `Files.tmp_upload` is a new convenience wrapper around `#upload` and
   `#delete`. It picks a temporary directory name and uploads the list of files

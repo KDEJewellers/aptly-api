@@ -1,4 +1,4 @@
 # Aptly API
 module Aptly
-  VERSION = '0.8.2'.freeze
+  VERSION = '0.9.0'.freeze
 end

@@ -41,8 +41,11 @@ module Aptly
     # @return [Hash] report data as specified in the API.
     # FIXME: this should be called file
     def add_file(path, **kwords)
+      # Don't mangle query, the file API is inconsistently using camelCase
+      # rather than CamelCase.
       response = connection.send(:post, "/repos/#{self.Name}/file/#{path}",
-                                 query: kwords)
+                                 query: kwords,
+                                 query_mangle: false)
       hash = JSON.parse(response.body)
       error = Errors::RepositoryFileError.from_hash(hash)
       raise error if error

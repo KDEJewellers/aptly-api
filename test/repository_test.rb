@@ -415,5 +415,14 @@ class RepositoryTest < Minitest::Test
     end
   end
 
+  # Make sure query params are properly passed to the server.
+  # This is special in that a) it needs no case mangling and b) is a post
+  # request. Both of which need special support.
+  def test_add_file_with_kwords
+    stub_request(:post, 'http://localhost/api/repos/kitten/file/fish?noRemove=1')
+      .to_return(body: "{\"FailedFiles\":[],\"Report\":{\"Warnings\":[],\"Added\":[\"gpgmepp_15.08.2+git20151212.1109+15.04-0_source added\"],\"Removed\":[]}}\n")
 
+    repo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten')
+    repo.add_file('fish', noRemove: 1)
+  end
 end

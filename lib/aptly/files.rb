@@ -42,7 +42,9 @@ module Aptly
       # @return return value of block
       #
       # @example Can be used to push into multiple repositories with one upload
-      #   Files.tmp_upload(files) { |d| repos.each { |r| r.add_files(d) } }
+      #   Files.tmp_upload(files) do |d|
+      #     repos.each { |r| r.add_files(d, noRemove: 1) }
+      #   end
       #
       # @since 0.9.0
       def tmp_upload(files, connection = Connection.new, **kwords)

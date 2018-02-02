@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.9.1]
+### Fixed
+- Hint at needing `noRemove: 1` as param when loop adding files (default
+  behavior is to remove added files) in the `Files.tmp_upload` documentation.
+
 ## [0.9.0]
 ### Added
 - `Files.tmp_upload` is a new convenience wrapper around `#upload` and

@@ -91,4 +91,11 @@ class ConnectionTest < Minitest::Test
     c = ::Aptly::Connection.new(uri: URI.parse('unix:///tmp/sock'))
     c.get
   end
+
+  def test_postish_param
+    stub_request(:post, 'http://unix/api/fries?Mayo=true').to_return(body: '')
+
+    c = ::Aptly::Connection.new(uri: URI.parse('unix:///tmp/sock'))
+    c.post('/fries', query: { Mayo: true })
+  end
 end

@@ -4,6 +4,7 @@
 ### Fixed
 - Hint at needing `noRemove: 1` as param when loop adding files (default
   behavior is to remove added files) in the `Files.tmp_upload` documentation.
+- `Connection` properly passes query parameters for post-ish requests now.
 
 ## [0.9.0]
 ### Added

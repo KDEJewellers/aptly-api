@@ -126,12 +126,14 @@ module Aptly
 
     def run_postish(action, path, kwords)
       body = kwords.delete(:body)
+      params = kwords.delete(:query)
       headers = kwords.delete(:headers)
 
       body, headers = mangle_post(body, headers, kwords)
 
       @connection.send(action, path, body, headers) do |request|
         setup_request(action, request)
+        request.params.update(params) if params
       end
     end
 

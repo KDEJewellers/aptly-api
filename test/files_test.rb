@@ -35,12 +35,13 @@ class FilesTest < Minitest::Test
     stub_request(:post, %r{http://localhost/api/files/Aptly__Files-(.+)})
       .with(headers: {'Content-Type'=>/multipart\/form-data; boundary=-----------RubyMultipartPost.*/})
       .to_return(body: JSON.generate(file_list))
-    stub_request(:delete, %r{http://localhost/api/files/Aptly__Files-(.+)})
 
     yielded = false
     ::Aptly::Files.tmp_upload([__FILE__]) do |dir|
       assert_includes(dir, 'Aptly__Files-')
       yielded = true
+      # Only set up this stub here, so we know delete wasn't called too early.
+      stub_request(:delete, %r{http://localhost/api/files/Aptly__Files-(.+)})
     end
     assert(yielded, 'expected tmp_upload to yield')
   end

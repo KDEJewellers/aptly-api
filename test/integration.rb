@@ -99,10 +99,28 @@ class RepositoryTest < Minitest::Test
     refute repo.published_in.empty?
   end
 
+  def test_eee_repo_publish_multi
+    kittenRepo = ::Aptly::Repository.get('kitten')
+    kittenRepo.edit!(DefaultComponent: 'kitten')
+    puppyRepo = ::Aptly::Repository.create('puppy', DefaultComponent: 'puppy')
+    pub = Aptly::PublishedRepository.from_repositories([kittenRepo, puppyRepo], 'kewl-repo-name', Distribution: 'wily', Architectures: %w[amd64], Signing: { Skip: true })
+
+    assert pub.is_a? ::Aptly::PublishedRepository
+    assert_equal 'wily', pub.Distribution
+    assert_equal %w[amd64], pub.Architectures
+    assert_equal %w[kitten puppy] , pub.Sources.collect(&:Name).sort
+    assert pub.Sources[0].is_a? ::Aptly::Repository
+
+    assert kittenRepo.published?
+    assert puppyRepo.published?
+    refute kittenRepo.published_in.empty?
+    refute puppyRepo.published_in.empty?
+  end
+
   def test_fff_repo_list
     list = ::Aptly::Repository.list
 
-    assert_equal(1, list.size)
+    assert_equal(2, list.size)
     assert(list[0].is_a?(::Aptly::Repository))
     assert_equal('kitten', list[0].Name)
   end

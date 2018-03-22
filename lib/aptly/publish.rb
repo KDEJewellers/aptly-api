@@ -42,6 +42,18 @@ module Aptly
                                    query: kwords)
         JSON.parse(response.body).collect { |h| new(connection, h) }
       end
+
+      # Publish a [Array<PublishedRepository>] list of repositories to a prefix
+      # @param sources [Array<Repository>] array of repositories to source
+      # @param prefix [String] the prefix to publish under (must be escaped see
+      #    {#escape_prefix})
+      # @return [PublishedRepository] newly published repository
+      def from_repositories(repos, prefix, **kwords)
+        sources = repos.collect do |x|
+          { Name: x.Name, Component: x.DefaultComponent }
+        end
+        Aptly.publish(sources, prefix, **kwords)
+      end
     end
 
     private

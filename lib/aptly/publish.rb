@@ -43,7 +43,7 @@ module Aptly
         JSON.parse(response.body).collect { |h| new(connection, h) }
       end
 
-      # Publish a [Array<PublishedRepository>] list of repositories to a prefix
+      # Publish a [Array<Repoistory>] list of repositories to a prefix
       # @param sources [Array<Repository>] array of repositories to source
       # @param prefix [String] the prefix to publish under (must be escaped see
       #    {#escape_prefix})

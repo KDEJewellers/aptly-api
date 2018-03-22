@@ -73,6 +73,7 @@ class PublishTest < Minitest::Test
   assert_equal 'kewl-repo-name', pub.Prefix
   assert_equal %w[source], pub.Architectures
   assert_equal %w[kitten puppy], pub.Sources.collect(&:Component)
+  assert_equal %w[kitten puppy], pub.Sources.collect(&:Name)
   end
 
   def test_s3_update!

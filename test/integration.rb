@@ -109,6 +109,7 @@ class RepositoryTest < Minitest::Test
     assert_equal 'wily', pub.Distribution
     assert_equal %w[amd64], pub.Architectures
     assert_equal %w[kitten puppy] , pub.Sources.collect(&:Name).sort
+    assert_equal %w[kitten puppy] , pub.Sources.collect(&:Component).sort
     assert pub.Sources[0].is_a? ::Aptly::Repository
 
     assert kittenRepo.published?

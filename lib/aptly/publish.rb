@@ -50,7 +50,7 @@ module Aptly
       # @return [PublishedRepository] newly published repository
       def from_repositories(repos, prefix, **kwords)
         sources = repos.collect do |x|
-          { Name: x.Name, Component: x.DefaultComponent }
+          { Name: x.Name }
         end
         Aptly.publish(sources, prefix, **kwords)
       end

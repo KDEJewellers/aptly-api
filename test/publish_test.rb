@@ -61,7 +61,7 @@ class PublishTest < Minitest::Test
 
   def test_publish_from_repositories
     stub_request(:post, 'http://localhost/api/publish/kewl-repo-name')
-    .with(body: '{"Distribution":"distro","Architectures":["source"],"Signing":{"Skip":true},"SourceKind":"local","Sources":[{"Name":"kitten","Component":"kitten"},{"Name":"puppy","Component":"puppy"}]}',
+    .with(body: '{"Distribution":"distro","Architectures":["source"],"Signing":{"Skip":true},"SourceKind":"local","Sources":[{"Name":"kitten"},{"Name":"puppy"}]}',
           headers: { 'Content-Type' => 'application/json' })
     .to_return(body: "{\"Architectures\":[\"source\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"local\",\"Sources\":[{\"Component\":\"kitten\",\"Name\":\"kitten\"}, {\"Component\":\"puppy\",\"Name\":\"puppy\"}],\"Storage\":\"\"}\n")
   kittenRepo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten', DefaultComponent: 'kitten')

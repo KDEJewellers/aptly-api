@@ -49,9 +49,7 @@ module Aptly
       #    {#escape_prefix})
       # @return [PublishedRepository] newly published repository
       def from_repositories(repos, prefix, **kwords)
-        sources = repos.collect do |x|
-          { Name: x.Name }
-        end
+        sources = repos.collect { |x| { Name: x.Name } }
         Aptly.publish(sources, prefix, **kwords)
       end
     end

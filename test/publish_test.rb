@@ -59,6 +59,23 @@ class PublishTest < Minitest::Test
     assert_equal('lab-eel', @pub.Label)
   end
 
+  def test_publish_from_repositories
+    stub_request(:post, 'http://localhost/api/publish/kewl-repo-name')
+    .with(body: '{"Distribution":"distro","Architectures":["source"],"Signing":{"Skip":true},"SourceKind":"local","Sources":[{"Name":"kitten"},{"Name":"puppy"}]}',
+          headers: { 'Content-Type' => 'application/json' })
+    .to_return(body: "{\"Architectures\":[\"source\"],\"Distribution\":\"distro\",\"Label\":\"\",\"Origin\":\"\",\"Prefix\":\"kewl-repo-name\",\"SourceKind\":\"local\",\"Sources\":[{\"Component\":\"kitten\",\"Name\":\"kitten\"}, {\"Component\":\"puppy\",\"Name\":\"puppy\"}],\"Storage\":\"\"}\n")
+  kittenRepo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'kitten', DefaultComponent: 'kitten')
+  puppyRepo = ::Aptly::Repository.new(::Aptly::Connection.new, Name: 'puppy', DefaultComponent: 'puppy')
+  pub = Aptly::PublishedRepository.from_repositories([kittenRepo, puppyRepo], 'kewl-repo-name', Distribution: 'distro', Architectures: %w[source], Signing: { Skip: true })
+
+  assert pub.is_a?(::Aptly::PublishedRepository)
+  assert_equal 'distro', pub.Distribution
+  assert_equal 'kewl-repo-name', pub.Prefix
+  assert_equal %w[source], pub.Architectures
+  assert_equal %w[kitten puppy], pub.Sources.collect(&:Component)
+  assert_equal %w[kitten puppy], pub.Sources.collect(&:Name)
+  end
+
   def test_s3_update!
     ret_hash = @pub_s3.marshal_dump.dup
     ret_hash[:Sources] = [{ 'Component' => 'main', 'Name' => 'puppies' }]

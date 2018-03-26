@@ -46,7 +46,7 @@ module Aptly
       # Publish an array of {Repository} to a prefix.
       # @param sources [Array<Repository>] array of repositories to source
       # @param prefix [String] the prefix to publish under (must be escaped see
-      #    {#escape_prefix})
+      #    {.escape_prefix})
       # @return [PublishedRepository] newly published repository
       def from_repositories(repos, prefix, **kwords)
         sources = repos.collect { |x| { Name: x.Name } }

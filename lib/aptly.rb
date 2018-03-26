@@ -39,7 +39,7 @@ module Aptly
     # Publish 1 or more sources into a public repository prefix.
     # @param sources [Array<Repository>] array of repositories to source
     # @param prefix [String] the prefix to publish under (must be escaped see
-    #    {#escape_prefix})
+    #    {.escape_prefix})
     # @param source_kind [String] the source kind (local or snapshot)
     # @return [PublishedRepository] newly published repository
     def publish(sources, prefix = '', source_kind = 'local',

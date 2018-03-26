@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.10.0]
+### Added
+- `PublishedRepository#from_repositories` publishes repository sources
+   into the same prefix.
+
 ## [0.9.1]
 ### Fixed
 - Hint at needing `noRemove: 1` as param when loop adding files (default

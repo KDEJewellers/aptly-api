@@ -26,10 +26,12 @@ require 'aptly/tmpname'
 # Aptly API
 module Aptly
   class << self
+    # Configures aptly in a block.
     def configure
       yield configuration
     end
 
+    # The global configuration instance.
     def configuration
       @configuration ||= Configuration.new
     end

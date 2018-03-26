@@ -18,6 +18,8 @@ require 'English'
 module Aptly
   # Helper to generate temporary names
   module TmpName
+    # Generate a random temporary directory name.
+    # @param prefix [String] arbitrary prefix string to start the name with
     # @return [String] temporary directory name (only safe characters)
     def self.dir(prefix)
       format('%<prefix>s-%<time>s-%<pid>s-%<tid>s-%<rand>s',

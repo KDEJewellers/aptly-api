@@ -36,6 +36,13 @@ class RepositoryTest < Minitest::Test
     assert_equal '', repo.Comment
     assert_equal '', repo.DefaultDistribution
     assert_equal '', repo.DefaultComponent
+
+    # Same call but made through convenience shorthand.
+    repo = ::Aptly.repo('kitten')
+    assert_equal 'kitten', repo.Name
+    assert_equal '', repo.Comment
+    assert_equal '', repo.DefaultDistribution
+    assert_equal '', repo.DefaultComponent
   end
 
   def test_repo_exist?

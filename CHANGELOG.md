@@ -4,6 +4,9 @@
 ### Added
 - `PublishedRepository#from_repositories` publishes repository sources
    into the same prefix.
+- `Aptly.repo` is a new shorthand for `Aptly::Repository.get` to get
+   a repository by name when writing code interactively in IRB, or to
+   write slightly less verbose code.
 
 ## [0.9.1]
 ### Fixed

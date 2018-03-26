@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Harald Sitter <sitter@kde.org>
+# Copyright (C) 2015-2018 Harald Sitter <sitter@kde.org>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,12 @@ module Aptly
     # The global configuration instance.
     def configuration
       @configuration ||= Configuration.new
+    end
+
+    # Convenience shorthand for {Repository#get}.
+    # @since 0.10.0
+    def repo(name, connection = Connection.new, **kwords)
+      Repository.get(name, connection, **kwords)
     end
 
     # Publish 1 or more sources into a public repository prefix.

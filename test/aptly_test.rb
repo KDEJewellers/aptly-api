@@ -29,4 +29,8 @@ class AptlyTest < Minitest::Test
       ::Aptly.publish([{ Name: 'thingy' }], 'dev/unstable')
     end
   end
+
+  def test_repo
+    # Tested via RepositoryTest!
+  end
 end

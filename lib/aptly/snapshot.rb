@@ -28,7 +28,7 @@ module Aptly
     end
 
     # Find differences between this and another snapshot
-    # @param [Snapshot] to diff against
+    # @param other_snapshot [Snapshot] to diff against
     # @return [Array<Hash>] diff between the two snashots
     def diff(other_snapshot)
       endpoint = "/snapshots/#{self.Name}/diff/#{other_snapshot.Name}"

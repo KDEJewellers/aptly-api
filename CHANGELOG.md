@@ -9,6 +9,7 @@
    write slightly less verbose code.
 
 ### Fixed
+- Documentation fixes.
 - `Connection.HTTP_ACTIONS` is now properly marked private.
 
 ## [0.9.1]

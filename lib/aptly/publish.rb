@@ -48,6 +48,7 @@ module Aptly
       # @param prefix [String] the prefix to publish under (must be escaped see
       #    {.escape_prefix})
       # @return [PublishedRepository] newly published repository
+      # @since 0.10.0
       def from_repositories(repos, prefix, **kwords)
         sources = repos.collect { |x| { Name: x.Name } }
         Aptly.publish(sources, prefix, **kwords)

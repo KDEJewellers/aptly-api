@@ -31,9 +31,10 @@ module Aptly
     private_constant :GETISH_ACTIONS
     POSTISH_ACTIONS = %i[post put].freeze
     private_constant :POSTISH_ACTIONS
-    HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
     WRITE_ACTIONS = (POSTISH_ACTIONS + %i[delete]).freeze
     private_constant :WRITE_ACTIONS
+    HTTP_ACTIONS = GETISH_ACTIONS + POSTISH_ACTIONS
+    private_constant :HTTP_ACTIONS
 
     CODE_ERRORS = {
       400 => Errors::ClientError,

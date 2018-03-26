@@ -8,6 +8,9 @@
    a repository by name when writing code interactively in IRB, or to
    write slightly less verbose code.
 
+### Fixed
+- `Connection.HTTP_ACTIONS` is now properly marked private.
+
 ## [0.9.1]
 ### Fixed
 - Hint at needing `noRemove: 1` as param when loop adding files (default

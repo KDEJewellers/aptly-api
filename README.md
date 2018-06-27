@@ -3,7 +3,6 @@
 [![Inline docs](http://inch-ci.org/github/KDEJewellers/aptly-api.svg?branch=master)](http://inch-ci.org/github/KDEJewellers/aptly-api)
 [![Build Status](https://travis-ci.org/KDEJewellers/aptly-api.svg?branch=master)](https://travis-ci.org/KDEJewellers/aptly-api)
 [![Coverage Status](https://coveralls.io/repos/KDEJewellers/aptly-api/badge.svg?branch=master&service=github)](https://coveralls.io/github/KDEJewellers/aptly-api?branch=master)
-[![Dependency Status](https://gemnasium.com/KDEJewellers/aptly-api.svg)](https://gemnasium.com/KDEJewellers/aptly-api)
 [![Code Climate](https://codeclimate.com/github/KDEJewellers/aptly-api/badges/gpa.svg)](https://codeclimate.com/github/KDEJewellers/aptly-api)
 
 ## Installation

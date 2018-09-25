@@ -47,7 +47,9 @@ module Aptly
 
     # Convenience wrapper around {Aptly.publish}, publishing this snapshot
     # locally and as only source of prefix.
-    # @param prefix [String] prefix to publish under (i.e. published snapshot name)
+    # @param prefix [String] prefix to publish under (i.e. published repo name).
+    #   This must be escaped (see {Aptly.escape_prefix})
+    # @see Aptly.escape_prefix
     # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
       Aptly.publish([{ Name: self.Name }], prefix, 'snapshot', kwords)

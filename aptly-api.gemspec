@@ -29,5 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.8'
 
   spec.add_dependency 'faraday', '~> 0.9'
-  spec.add_dependency 'excon', '~> 0.54'
+  spec.add_dependency 'excon', '~> 0.71'
 end

@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.10.1]
+### Fixed
+- Publishing endpoint escaping no longer creates invalid URIs when the Prefix
+  already contains underscores. Prefix=foo_bar is now correctly escaped to
+  foo__bar.
+- excon 0.71 is now required as earlier versions had open security issues.
+
 ## [0.10.0]
 ### Added
 - `PublishedRepository#from_repositories` publishes repository sources

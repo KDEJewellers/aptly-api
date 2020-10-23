@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2018 Harald Sitter <sitter@kde.org>
+# Copyright (C) 2015-2020 Harald Sitter <sitter@kde.org>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -69,7 +69,7 @@ module Aptly
     # @return [String] API-safe prefix notation
     # @since 0.7.0
     def escape_prefix(prefix_path)
-      prefix_path.tr('_', '__').tr('/', '_')
+      prefix_path.gsub('_', '__').tr('/', '_')
     end
   end
 end

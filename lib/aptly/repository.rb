@@ -100,7 +100,7 @@ module Aptly
     # @see Aptly.escape_prefix
     # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
-      Aptly.publish([{ Name: self.Name }], prefix, 'local', kwords)
+      Aptly.publish([{ Name: self.Name }], prefix, 'local', **kwords)
     end
 
     # Edit this repository's attributes as per the parameters.

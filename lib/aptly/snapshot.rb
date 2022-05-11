@@ -52,7 +52,7 @@ module Aptly
     # @see Aptly.escape_prefix
     # @return [PublishedRepository] newly published repository
     def publish(prefix, **kwords)
-      Aptly.publish([{ Name: self.Name }], prefix, 'snapshot', kwords)
+      Aptly.publish([{ Name: self.Name }], prefix, 'snapshot', **kwords)
     end
 
     class << self

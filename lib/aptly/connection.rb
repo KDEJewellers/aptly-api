@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2017 Harald Sitter <sitter@kde.org>
+# Copyright (C) 2015-2022 Harald Sitter <sitter@kde.org>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,8 @@
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'faraday'
+require 'faraday/excon'
+require 'faraday/multipart'
 require 'json'
 require 'uri'
 

@@ -27,6 +27,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 3.1'
   spec.add_development_dependency 'yard', '~> 0.8'
 
-  spec.add_dependency 'faraday', '~> 0.9'
+  spec.add_dependency 'faraday', '~> 2.0'
+  spec.add_dependency 'faraday-multipart', '~> 1.0'
+  spec.add_dependency 'faraday-excon', '~> 2.0'
   spec.add_dependency 'excon', '~> 0.71'
 end

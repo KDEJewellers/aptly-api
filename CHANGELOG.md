@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.11]
+
+### Added
+
+- Faraday 2 support
+- Ruby 3 support
+
 ## [0.10.1]
 ### Fixed
 - Publishing endpoint escaping no longer creates invalid URIs when the Prefix
